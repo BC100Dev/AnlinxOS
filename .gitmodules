@@ -1,0 +1,3 @@
+[submodule "External/linux-kernel"]
+	path = External/linux-kernel
+	url = https://github.com/torvalds/linux

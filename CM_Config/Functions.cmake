@@ -16,3 +16,8 @@ function(CollectSources RootDir OutVar)
     file(GLOB_RECURSE SOURCE_FILES ${SEARCH_PATTERNS})
     set(${OutVar} ${SOURCE_FILES} PARENT_SCOPE)
 endfunction()
+
+function(GetCompilerThreadCount VAR)
+    ProcessorCount(NPROC)
+    set(${VAR} ${NPROC} PARENT_SCOPE)
+endfunction()
