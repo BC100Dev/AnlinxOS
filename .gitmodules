@@ -1,3 +1,7 @@
 [submodule "External/linux-kernel"]
 	path = External/linux-kernel
 	url = https://github.com/torvalds/linux
+[submodule "External/busybox"]
+	path = External/busybox
+	url = https://git.busybox.net/busybox
+	branch = 1_36_stable

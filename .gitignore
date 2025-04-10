@@ -36,3 +36,4 @@ build*
 Build*
 Output*
 cmake-build*
+.root

@@ -4,6 +4,9 @@
 #include <filesystem>
 
 #include <unistd.h>
+#include <sys/mount.h>
+#include <sys/reboot.h>
+#include <linux/reboot.h>
 
 namespace fs = std::filesystem;
 
@@ -12,7 +15,7 @@ struct BinaryInfo {
     bool executable = false;
 };
 
-std::vector<std::string> translateCmdLine(const std::string& cmdLine) {
+std::vector<std::string> translateCmdLine(const std::string &cmdLine) {
     if (cmdLine.empty() || cmdLine.find_first_not_of(' ') == std::string::npos)
         return {};
 
@@ -25,7 +28,7 @@ std::vector<std::string> translateCmdLine(const std::string& cmdLine) {
     std::stringstream current;
     bool lastTokenHasBeenQuoted = false;
 
-    for (char nextTok : cmdLine) {
+    for (char nextTok: cmdLine) {
         switch (state) {
             case inQuote:
                 if (nextTok == '\'') {
@@ -73,11 +76,12 @@ std::vector<std::string> translateCmdLine(const std::string& cmdLine) {
     return result;
 }
 
-BinaryInfo find_binary(const std::string& binName) {
+BinaryInfo find_binary(const std::string &binName) {
     BinaryInfo result;
 
-    const char* env = std::getenv("PATH");
-    std::stringstream pathEnv(env ? env : "/System/x64:/System/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin");
+    const char *env = std::getenv("PATH");
+    std::stringstream pathEnv(
+            env ? env : "/System/x64:/System/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin");
     std::string currentPathEntry;
 
     while (std::getline(pathEnv, currentPathEntry, ':')) {
@@ -94,7 +98,42 @@ BinaryInfo find_binary(const std::string& binName) {
     return result;
 }
 
-int main(int argc, char** argv) {
+bool is_init() {
+    return getpid() == 1;
+}
+
+int main(int argc, char **argv) {
+    if (is_init()) {
+        if (!fs::exists("/dev"))
+            fs::create_directory("/dev");
+
+        if (!fs::exists("/proc"))
+            fs::create_directory("/proc");
+
+        if (!fs::exists("/sys"))
+            fs::create_directory("/sys");
+
+        if (mount("dev", "/dev", "devtmpfs", 0, nullptr) != 0)
+            std::cerr << "Failed to mount /dev" << std::endl;
+
+        if (mount("proc", "/proc", "proc", 0, nullptr) != 0)
+            std::cerr << "Failed to mount /proc" << std::endl;
+
+        if (mount("sysfs", "/sys", "sysfs", 0, nullptr) != 0)
+            std::cerr << "Failed to mount /sys" << std::endl;
+
+        if (fs::exists("/dev/sda1")) {
+            if (!fs::exists("/mnt"))
+                fs::create_directory("/mnt");
+
+            if (mount("/dev/sda1", "/mnt", "ext4", 0, nullptr) != 0)
+                std::cerr << "Failed to mount /dev/sda1 to /mnt" << std::endl;
+        }
+    }
+
+    std::cout << "Started up the init process" << std::endl << std::endl;
+    std::cout << "*** ANLIN OS ***" << std::endl;
+
     int rc = 0;
     while (true) {
         std::string cmdline;
@@ -102,12 +141,16 @@ int main(int argc, char** argv) {
         if (rc != 0)
             std::cout << "[" << rc << "]";
 
-        if (getuid() == 0)
-            std::cout << "# ";
-        else
-            std::cout << "$ ";
+        std::cout << (getuid() == 0 ? "#> " : "$> ");
 
-        std::getline(std::cin, cmdline);
+        if (!std::getline(std::cin, cmdline)) {
+            std::cout << "Caught EOF..." << std::endl;
+            if (is_init())
+                reboot(LINUX_REBOOT_CMD_RESTART);
+
+            break;
+        }
+
         if (cmdline.empty())
             continue;
 
@@ -115,8 +158,16 @@ int main(int argc, char** argv) {
         if (tokens.empty())
             continue;
 
-        if (tokens[0] == "exit")
+        if (tokens[0] == "exit" || tokens[0] == "quit" || tokens[0] == "shutdown") {
+            if (is_init()) {
+                sync();
+                rc = reboot(LINUX_REBOOT_CMD_POWER_OFF);
+                if (rc != 0)
+                    perror("shutdown failed");
+            }
+
             break;
+        }
 
         BinaryInfo info = find_binary(tokens[0]);
         if (info.binPath.empty()) {

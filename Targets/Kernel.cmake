@@ -10,7 +10,10 @@ if (NOT EXISTS "${KERNEL_SOURCE_DIR}/Makefile")
     return()
 endif ()
 
-set(KERNEL_COMPILE_FLAGS "")
+if (NOT DEFINED KERNEL_COMPILE_FLAGS)
+    set(KERNEL_COMPILE_FLAGS "")
+endif ()
+
 if (DEFINED LINUX_CROSS_COMPILE AND LINUX_CROSS_COMPILE EQUAL ON)
     if (DEFINED LINUX_COMPILER_ARCH)
         list(APPEND KERNEL_COMPILE_FLAGS "ARCH=${LINUX_COMPILER_ARCH}")
@@ -25,16 +28,16 @@ if (DEFINED COMPILER_THREADS)
     if (COMPILER_THREADS STREQUAL "all")
         GetCompilerThreadCount(NPROC)
         list(APPEND KERNEL_COMPILE_FLAGS "-j${NPROC}")
-    else()
+    else ()
         list(APPEND KERNEL_COMPILE_FLAGS "-j${COMPILER_THREADS}")
     endif ()
 endif ()
 
 message(STATUS "Sourcing up the Linux kernel")
 add_custom_target(linux-defconfig
-    COMMAND make -C "${KERNEL_SOURCE_DIR}" ${KERNEL_COMPILE_FLAGS} defconfig
-    WORKING_DIRECTORY "${KERNEL_SOURCE_DIR}")
+        COMMAND make -C "${KERNEL_SOURCE_DIR}" ${KERNEL_COMPILE_FLAGS} defconfig
+        WORKING_DIRECTORY "${KERNEL_SOURCE_DIR}")
 
 add_custom_target(linux
-    COMMAND make -C "${KERNEL_SOURCE_DIR}" ${KERNEL_COMPILE_FLAGS}
-    WORKING_DIRECTORY "${KERNEL_SOURCE_DIR}")
+        COMMAND make -C "${KERNEL_SOURCE_DIR}" ${KERNEL_COMPILE_FLAGS}
+        WORKING_DIRECTORY "${KERNEL_SOURCE_DIR}")
