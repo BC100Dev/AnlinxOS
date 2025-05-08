@@ -1,9 +1,0 @@
-- Fork systemd and D-Bus to support both desktops and smartphones, minimal unit set
-- Provide a simple replacement for NetworkManager, focusing on Wi-Fi, USB, Ethernet and tethering
-- Fork PipeWire with the inclusion of audio/video routing
-- Have the LiveISO base upon ArchISO
-- Use cpio for initramfs to reduce bloat and maintain full control over early boot
-- Provide static binaries where possible to reduce library overhead
-- Have the ability to run older shared libraries for executables to maintain compatibility
-- Include Android Framework Support on the Type-1 Virtualization Solution (wo/ Google) (see similar: https://github.com/BC100Dev/alde)
-- Write minimal init scripts before handing off to systemd

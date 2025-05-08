@@ -20,6 +20,8 @@ foreach (Private_CM_CONFIG_Module ${Private_CM_CONFIG_Modules})
     endif ()
 endforeach ()
 
+unset(PROJECT_MODULE_ROOT)
+
 if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Targets")
     file(GLOB CUSTOM_TARGETS "${CMAKE_CURRENT_SOURCE_DIR}/Targets/*.cmake")
     foreach (CUSTOM_TARGET ${CUSTOM_TARGETS})

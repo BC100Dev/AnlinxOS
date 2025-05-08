@@ -1,0 +1,4 @@
+This directory will serve the sources for two different init setups, both that will work under one init process:
+
+1. Boot into the main OS, allowing the user to boot in both Normal and Safe Mode
+2. Boot into Recovery, effectively giving the user access to the userdata modifications

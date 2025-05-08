@@ -108,3 +108,16 @@ maintainability, and I also make sure that I keep myself sane (because someone e
 needs a break :skull:), so that updates are happening gradually instead of rapidly (looking
 at Arch Linux over here). Now, I know you guys don't like the 2-to-3 monthly updates, but
 acknowledging of me being a solo developer, I don't want to stress myself out completely.
+
+---
+
+## Future ideas
+Okay, you might ask me, "Chris, why are you already planning ideas for the future?" Let uncle
+Chris explain it. Basically, if you want to install this OS on an Android device, you need to
+unlock the bootloader, which is common practice with custom ROMs in general. However, if the
+OS isn't as bad as the other a THOUSAND unfinished projects of mine, I might consider making
+devices themselves, partnering with people that are experts in making phones, and maybe even
+Computers and/or Laptops in general. Again, that is a future idea I might do. However, if you
+don't like this idea, I can drop it, and there won't be any problems with you guys bricking
+five more Android devices, just because you tried installing AnlinOS. Yes, I've been there,
+bricked around five devices of my own. One of them was "I wanted Android 7" :skull: :laughing:

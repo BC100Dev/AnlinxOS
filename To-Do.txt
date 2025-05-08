@@ -1,0 +1,32 @@
+[ Old Ideas ]
+- Fork systemd and D-Bus to support both desktops and smartphones, minimal unit set
+- Provide a simple replacement for NetworkManager, focusing on Wi-Fi, USB, Ethernet and tethering
+- Fork PipeWire with the inclusion of audio/video routing
+- Have the LiveISO base upon ArchISO
+- Use cpio for initramfs to reduce bloat and maintain full control over early boot
+- Provide static binaries where possible to reduce library overhead
+- Have the ability to run older shared libraries for executables to maintain compatibility
+- Include Android Framework Support on the Type-1 Virtualization Solution (wo/ Google) (see similar: https://github.com/BC100Dev/alde)
+- Write minimal init scripts before handing off to systemd
+
+Legend:
+[ ] = No development yet
+[-] = In Progress
+[?] = Unknown State
+[X] = Finished
+[H] = Halted
+[R] = Marked for Removal
+
+[ Current Ideas (Desktop Core, v1) ]
+[ ] Get initramfs working.
+[ ] Have initramfs pass the execution onto the disk.
+[ ] Rewrite the libc, merging glibc and bionic into one thing.
+[ ] Get core components working (rewrite BusyBox).
+[ ] Get the necessary parts working (Networking, Audio Server, Bluetooth, Graphics Pipeline, CPU drivers (if necessary), USB I/O).
+  > in other words, that's the HAL we are talking about.
+[ ] Get the Wayland Protocol running under the Graphics Pipeline.
+[ ] Get the Desktop Environment running
+[ ] Provide compatibility for applications
+
+[ Current Ideas (Mobile Core, stabilized in v5, probably) ]
+[ ] Port over the Desktop things to Mobile, effectively taking 6 months or probably more to port, ohgodpleasehelpme-
