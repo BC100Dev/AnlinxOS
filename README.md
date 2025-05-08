@@ -39,13 +39,22 @@ self-independent OS.
 ---
 
 ## Key Concepts
-- **Built on customized CLFS**: This OS does not contain a repackaged distribution base, like
-  ZorinOS, taking the distro base of Ubuntu. AnlinOS is constructed using CLFS (Coding Linux
-  from Scratch) for complete control for each component.
+- **Built on CLFS**: This OS does not contain a repackaged distribution base, like ZorinOS,
+  taking the distro base of Ubuntu. AnlinOS is constructed using CLFS (Coding Linux from Scratch)
+  for complete control for each component.
 - **Android Framework being included**: Unlike AOSP-based systems, AnlinOS does not depend on
   the Android Runtime, SystemUI or typical Android HALs. This means that the Android Framework
   Support is translated to the glibc Layer (see [`alde`](https://github.com/BC100Dev/alde) for
   reference).
+- **GSI-like experience**: Android in itself gives you the possibility to have a GSI (Generic
+  System Image) on an Android device, meaning one ROM can support several devices. This OS
+  takes that concept in developing a suitable solution, especially for those that are mainly
+  afraid of unlocking the bootloader and possibly bricking the device in the process. Don't
+  worry, you still need to unlock the bootloader :skull:
+- **HAL being customizable**: The HAL (Hardware Abstraction Layer) itself will provide generic
+  modules (think of them as drivers), meaning you can load in custom drivers from the device
+  vendor you own. This means that you can integrate certain device drivers that will make most
+  of the performance onto the operating system.
 - **Compatibility Layers**: The core idea is to get most programs to work with a compatibility
   layer, similar to how Windows operates, making older shared libraries still being present,
   even when they are no longer being up to date.
@@ -53,11 +62,6 @@ self-independent OS.
   GNOME and KDE Plasma, those are integral to a functional system for newbies. This OS will
   deliver a custom Graphical Environment that is capable for Mobile and Desktop systems, powered
   with the use of a Safety Protocol we all love, *Wayland*.
-- **GSI-like experience**: Android in itself gives you the possibility to have a GSI (Generic
-  System Image) on an Android device, meaning one ROM can support several devices. This OS
-  takes that concept in developing a suitable solution, especially for those that are mainly
-  afraid of unlocking the bootloader and possibly bricking the device in the process. Don't
-  worry, you still need to unlock the bootloader :skull:
 
 ---
 
