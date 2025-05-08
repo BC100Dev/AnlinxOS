@@ -2,40 +2,57 @@
 **AnlinOS** is a custom Linux-based operating system from the ground up for both the mobile
 (Android-based mobile devices) and desktop environments, taking the idea of LFS (Linux From
 Scratch) into a fully customized idea. This operating system aims to merge the best parts
-from other operating systems,
+from other operating systems.
 
 - Windows containing the Compatibility Layer
 - Linux on the core itself (yes, it is a kernel)
 - Android being virtualized on the Type-1 Layer (see `wine` and
   [`alde`](https://github.com/BC100Dev/alde))
+  - Quick explanation, `alde` is similar to `wine` that translates Android calls to glibc
+    calls. Initially, I archived it because it was no longer in development, thinking that
+    I could reuse this concept in this OS. Maybe I'll unarchive that project, eventually
+    copying the sources from here over to that repository, but only time will tell.
 
 This will break quite many packages that would be ported, since there are ideas on refining
-the Root File Structure (`/`) itself. The idea behind it is to make the File Structure more
-beginner-friendly. Certain directories like `/dev`, `/sys` and `/proc` will stay, but I will
-mainly reconstruct the use of `/usr`, `/home` and other directories. I might aswell make two
-different builds, one for starters and one for Linux superiors, but I don't have my head this
-far into the future.
+the FHS (File Hierarchy System) (`/`) itself. The idea behind it is to make the File Structure
+more beginner-friendly. Certain directories like `/dev`, `/sys` and `/proc` will stay, but I
+will mainly reconstruct the use of `/usr`, `/home` and other directories into Android
+equivalents. Say, we got the System, I pack the System in a read-only `/System` partition. For
+all the user files and such, we pack that into `/Data`, where the `/home` directory gets
+replaced with a symlink of `/Users` that point towards `/Data/UserDir` (I got `/Data/Users`
+reserved for something else). This itself already looks better. To allow Factory Resets that
+Android does, we also implement a `/Recovery` partition. Oh, and `bin`, along with `lib` no
+longer exists. Say hello to `/System/x64`. You can think of it as a System32-alike directory.
 
-Note that this is not another ROM, nor a custom Android fork. AnlinOS is an independent OS
-built with full developer control and modular design.
+Now, I mentioned me having a reserved `/Data/Users`, and you may wonder, "Chris, what the hell
+should that even be?" Don't worry, uncle BC100Dev here will explain. I decided to completely
+nuke `/etc/passwd`, along with its `shadow` equivalent into its new User Management System,
+which will end up being at that particular place. That itself is a directory, in which I will
+have `login.d` (for users that can be logged in) and `services.d` (service-required users).
+Something similar will also be placed under `/System/base/users`, where that would only contain
+`services.d` and `system.d` (pun intended :laughing:)
+
+In other words, you can see that AnlinOS is not another Linux distro fork (like Ubuntu being
+linked to Debian), LineageOS being AOSP-equivalent and so on. Nope, AnlinOS is a
+self-independent OS.
 
 ---
 
 ## Key Concepts
-- **Built on customized LFS**: This OS does not contain a repackaged distribution base, like
-  Zorin OS, taking the distro base of Ubuntu. AnlinOS is constructed using LFS for complete
-  control for each component.
-- **Android Framework being optional**: Unlike AOSP-based systems, AnlinOS does not depend on
+- **Built on customized CLFS**: This OS does not contain a repackaged distribution base, like
+  ZorinOS, taking the distro base of Ubuntu. AnlinOS is constructed using CLFS (Coding Linux
+  from Scratch) for complete control for each component.
+- **Android Framework being included**: Unlike AOSP-based systems, AnlinOS does not depend on
   the Android Runtime, SystemUI or typical Android HALs. This means that the Android Framework
   Support is translated to the glibc Layer (see [`alde`](https://github.com/BC100Dev/alde) for
   reference).
 - **Compatibility Layers**: The core idea is to get most programs to work with a compatibility
   layer, similar to how Windows operates, making older shared libraries still being present,
-  even when they are no longer being up-to-date.
+  even when they are no longer being up to date.
 - **DE compatible with Mobile and Desktops**: A desktop environment, in which we know with
-  GNOME and KDE Plasma, are integral to a functional system for newbies. This OS will deliver
-  a custom Graphical Environment that is capable for Mobile and Desktop systems, powered with
-  the use of a Safety Protocol we all love, *Wayland*.
+  GNOME and KDE Plasma, those are integral to a functional system for newbies. This OS will
+  deliver a custom Graphical Environment that is capable for Mobile and Desktop systems, powered
+  with the use of a Safety Protocol we all love, *Wayland*.
 - **GSI-like experience**: Android in itself gives you the possibility to have a GSI (Generic
   System Image) on an Android device, meaning one ROM can support several devices. This OS
   takes that concept in developing a suitable solution, especially for those that are mainly
@@ -46,29 +63,33 @@ built with full developer control and modular design.
 
 ## Current Status
 AnlinOS is currently under heavy development. Most components are in early implementation or
-experimental testing. Code will remain hosted on GitHub during this stage, but may migrate to a
-self-hosted Git repository once the codebase grows or outpaces GitHub’s project structure.
+experimental testing. Code will remain hosted on GitHub during this stage, until I may have to
+migrate to a self-hosted Git repository once the codebase grows or outpaces GitHub’s project
+structure.
 
-As of now, AnlinOS is currently in the planning stages. Once this project goes out from the
-planning stages, it will go into the second stage, heavy development. Most components will
-mainly be rewritten to maintain the core concept of a ***potential*** new C-library that isn't
-`glibc`, but having complete support for `glibc` and `bionic` themselves, merging the two
-C-systems into one. This is merely an idea of the possibilities, but wouldn't say that it would
-be a 100% idea. Maybe for the future, but for now, AnlinOS will mainly reside with `glibc`.
+As of now, AnlinOS is currently in the planning stages and in heavy development. Most
+components will stay as-is, but certain components such as the `libc` will be needed to be
+rewritten due to the refactor of the FHS (File Hierarchy System). So, for the `libc` rewrite,
+I thought of merging `glibc` and `bionic` together, since they are the most used C-libraries
+that exists, meaning I would merge the best of these two and perform a reimplementation for
+those that need new implementations themselves. Yes, this was an initial idea, but seeing
+on where the planning is going, this is ending up to be a necessity to be dealt with. UNLESS,
+there are configuration files that I am not aware, but then, again, `/usr` and `/etc` won't
+exist.
 
 Another thing to mention is keeping the status of this entire thing being open source. Now,
-sure, GitHub can help me store the sources for now, but once I hit the limitations, I would
+sure, GitHub can help me store the sources for now. However, once I hit the limitations, I would
 have to move the source files over to my own server, bypassing the limitations in the process,
-so that it may or may not even grow up to 10-50 GB in size. I don't have any specific
-expectations, as to what storage space it'll finalize at, when it comes to the source code, but
+so that it may or may not even grow up to 10–50 GB in size. I don't have any specific
+expectations as to what storage space it'll finalize at when it comes to the source code, but
 I assume that it will end up at somewhere approximately 20 GB. Hopefully, not more. Oh, and
-I clearly don't want to rely on the `repo` tool developed by Google themselves, especially
-that AOSP went into private development.
+I don't want to rely on the `repo` tool developed by Google themselves, especially that AOSP
+went into private development.
 
 ---
 
 ## Planned Release Strategy
-Now, I might have an idea on how I could keep this OS up-to-date, while also having the mind on
+Now, I might have an idea on how I could keep this OS up to date, while also having the mind on
 keeping the OS secure. Here is the outline:
 
 - **Feature Updates**: Released every year or two, similar to Windows' major version changes.
@@ -79,6 +100,7 @@ keeping the OS secure. Here is the outline:
   over rapid feature churn.
 
 This way, I make sure that AnlinOS has the stability in mind, contains the long-term
-maintainability and I also make sure that I keep myself sane (because someone eventually also
-needs a break :skull: ), so that updates are happening gradually instead of rapidly (looking
-at Arch Linux over here).
+maintainability, and I also make sure that I keep myself sane (because someone eventually also
+needs a break :skull:), so that updates are happening gradually instead of rapidly (looking
+at Arch Linux over here). Now, I know you guys don't like the 2-to-3 monthly updates, but
+acknowledging of me being a solo developer, I don't want to stress myself out completely.

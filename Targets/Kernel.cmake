@@ -6,7 +6,7 @@ if (NOT EXISTS "${KERNEL_SOURCE_DIR}")
 endif ()
 
 if (NOT EXISTS "${KERNEL_SOURCE_DIR}/Makefile")
-    message(CHECK_FAIL "Makefile for the Linux kernel is missing")
+    message(CHECK_FAIL "Makefile for the Linux kernel is missing. The kernel cannot be compiled, when the Makefile itself is missing.")
     return()
 endif ()
 
