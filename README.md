@@ -1,5 +1,5 @@
-# AnlinOS
-**AnlinOS** is a custom Linux-based operating system from the ground up for both the mobile
+# AnlinxOS
+**AnlinxOS** is a custom Linux-based operating system from the ground up for both the mobile
 (Android-based mobile devices) and desktop environments, taking the idea of LFS (Linux From
 Scratch) into a fully customized idea. This operating system aims to merge the best parts
 from other operating systems.
@@ -32,17 +32,17 @@ have `login.d` (for users that can be logged in) and `services.d` (service-requi
 Something similar will also be placed under `/System/base/users`, where that would only contain
 `services.d` and `system.d` (pun intended :laughing:)
 
-In other words, you can see that AnlinOS is not another Linux distro fork (like Ubuntu being
-linked to Debian), LineageOS being AOSP-equivalent and so on. Nope, AnlinOS is a
+In other words, you can see that AnlinxOS is not another Linux distro fork (like Ubuntu being
+linked to Debian), LineageOS being AOSP-equivalent and so on. Nope, AnlinxOS is a
 self-independent OS.
 
 ---
 
 ## Key Concepts
 - **Built on CLFS**: This OS does not contain a repackaged distribution base, like ZorinOS,
-  taking the distro base of Ubuntu. AnlinOS is constructed using CLFS (Coding Linux from Scratch)
+  taking the distro base of Ubuntu. AnlinxOS is constructed using CLFS (Coding Linux from Scratch)
   for complete control for each component.
-- **Android Framework being included**: Unlike AOSP-based systems, AnlinOS does not depend on
+- **Android Framework being included**: Unlike AOSP-based systems, AnlinxOS does not depend on
   the Android Runtime, SystemUI or typical Android HALs. This means that the Android Framework
   Support is translated to the glibc Layer (see [`alde`](https://github.com/BC100Dev/alde) for
   reference).
@@ -66,12 +66,12 @@ self-independent OS.
 ---
 
 ## Current Status
-AnlinOS is currently under heavy development. Most components are in early implementation or
+AnlinxOS is currently under heavy development. Most components are in early implementation or
 experimental testing. Code will remain hosted on GitHub during this stage, until I may have to
 migrate to a self-hosted Git repository once the codebase grows or outpaces GitHub’s project
 structure.
 
-As of now, AnlinOS is currently in the planning stages and in heavy development. Most
+As of now, AnlinxOS is currently in the planning stages and in heavy development. Most
 components will stay as-is, but certain components such as the `libc` will be needed to be
 rewritten due to the refactor of the FHS (File Hierarchy System). So, for the `libc` rewrite,
 I thought of merging `glibc` and `bionic` together, since they are the most used C-libraries
@@ -100,10 +100,10 @@ keeping the OS secure. Here is the outline:
   Focused on introducing new capabilities, graphical updates and/or architectural changes.
 - **Minor Updates**: Rolled out approximately every two months, in which it includes Security
   Updates, Bug Fixes, Translation and Device Support Improvements.
-- **No forced monthly releases**: AnlinOS prioritizes stability and long-term maintainability
+- **No forced monthly releases**: AnlinxOS prioritizes stability and long-term maintainability
   over rapid feature churn.
 
-This way, I make sure that AnlinOS has the stability in mind, contains the long-term
+This way, I make sure that AnlinxOS has the stability in mind, contains the long-term
 maintainability, and I also make sure that I keep myself sane (because someone eventually also
 needs a break :skull:), so that updates are happening gradually instead of rapidly (looking
 at Arch Linux over here). Now, I know you guys don't like the 2-to-3 monthly updates, but
@@ -119,5 +119,5 @@ OS isn't as bad as the other a THOUSAND unfinished projects of mine, I might con
 devices themselves, partnering with people that are experts in making phones, and maybe even
 Computers and/or Laptops in general. Again, that is a future idea I might do. However, if you
 don't like this idea, I can drop it, and there won't be any problems with you guys bricking
-five more Android devices, just because you tried installing AnlinOS. Yes, I've been there,
+five more Android devices, just because you tried installing AnlinxOS. Yes, I've been there,
 bricked around five devices of my own. One of them was "I wanted Android 7" :skull: :laughing:
