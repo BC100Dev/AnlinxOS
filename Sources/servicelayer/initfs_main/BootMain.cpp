@@ -9,7 +9,6 @@
 #include <sys/reboot.h>
 #include <linux/reboot.h>
 
-#include "KModLoader.hpp"
 #include "Cmdline.hpp"
 
 #include <AnlinOS/Shared/Utils.hpp>

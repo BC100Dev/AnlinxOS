@@ -29,3 +29,9 @@ function(SetTargetOutputDir TARGET DIR)
             ARCHIVE_OUTPUT_DIRECTORY "${DIR}"
     )
 endfunction()
+
+function(SetTargetFilename TARGET NAME)
+    set_target_properties(${TARGET} PROPERTIES
+        OUTPUT_NAME "${NAME}"
+    )
+endfunction()
