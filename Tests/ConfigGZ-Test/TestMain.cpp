@@ -19,7 +19,7 @@ int main() {
 
     std::ifstream in("/proc/config.gz", std::ios::binary);
     if (!in) {
-        std::cerr << "Error: failed to open /proc/config.gz, error " << errno << std::endl;
+        std::cerr << "Error: failed to open /proc/config.gz, error " << std::strerror(errno) << std::endl;
         return 1;
     }
 
