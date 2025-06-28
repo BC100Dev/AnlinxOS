@@ -1,4 +1,4 @@
-#include <AnlinOS/Shared/Utils.hpp>
+#include <AnlinxOS/Shared/Utils.hpp>
 
 #include <sstream>
 #include <stdexcept>
@@ -62,4 +62,10 @@ std::vector<std::string> translateCmdLine(const std::string &cmdLine) {
         throw std::runtime_error("unbalanced quotes in " + cmdLine);
 
     return result;
+}
+
+std::string TrimString(const std::string &str) {
+    size_t start = str.find_first_not_of(" \t\r\n");
+    size_t end = str.find_last_not_of(" \t\r\n");
+    return (start == std::string::npos || end == std::string::npos) ? "" : str.substr(start, end - start + 1);
 }

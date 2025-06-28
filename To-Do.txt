@@ -1,14 +1,3 @@
-[ Old Ideas ]
-- Fork systemd and D-Bus to support both desktops and smartphones, minimal unit set
-- Provide a simple replacement for NetworkManager, focusing on Wi-Fi, USB, Ethernet and tethering
-- Fork PipeWire with the inclusion of audio/video routing
-- Have the LiveISO base upon ArchISO
-- Use cpio for initramfs to reduce bloat and maintain full control over early boot
-- Provide static binaries where possible to reduce library overhead
-- Have the ability to run older shared libraries for executables to maintain compatibility
-- Include Android Framework Support on the Type-1 Virtualization Solution (wo/ Google) (see similar: https://github.com/BC100Dev/alde)
-- Write minimal init scripts before handing off to systemd
-
 Legend:
 [ ] = No development yet
 [-] = In Progress
@@ -17,16 +6,22 @@ Legend:
 [H] = Halted
 [R] = Marked for Removal
 
-[ Current Ideas (Desktop Core, v1) ]
-[ ] Get initramfs working.
-[ ] Have initramfs pass the execution onto the disk.
+##### Current Ideas (Desktop Core, v1) #####
+[H] Get initramfs working.
+  > Halted for the C++ Extended Library due to reason of getting Kernel module loading working
+[-] Get the C++ Extended Library (ALX) working
+[-] Have initramfs pass the execution onto the disk.
 [ ] Rewrite the libc, merging glibc and bionic into one thing.
-[ ] Get core components working (rewrite BusyBox).
+[-] Get core components working (rewrite BusyBox).
 [ ] Get the necessary parts working (Networking, Audio Server, Bluetooth, Graphics Pipeline, CPU drivers (if necessary), USB I/O).
   > in other words, that's the HAL we are talking about.
+  > in the process, make it as generic as possible for portability
+  > as for the Networking... this will be a pain in the fucking ass, since we are talking about DHCP, Wi-Fi, Ethernet, Security and much more
+  > ohboy, thiswillbefun, thisisclearlynotsarcasm, no, notatall
 [ ] Get the Wayland Protocol running under the Graphics Pipeline.
+  > we are also talking about multi-GPU handling. No idea, whether this will be fun or no
 [ ] Get the Desktop Environment running
-[ ] Provide compatibility for applications
+[ ] Provide compatibility for applications to be able to load older libraries
 
-[ Current Ideas (Mobile Core, stabilized in v5, probably) ]
-[ ] Port over the Desktop things to Mobile, effectively taking 6 months or probably more to port, ohgodpleasehelpme-
+##### Current Ideas (Mobile Core, stabilized in v5, probably) #####
+[ ] Port over the Desktop things to Mobile, effectively taking 6 months or probably more to port... ohgodpleasehelpme-

@@ -6,4 +6,6 @@
 
 std::vector<std::string> translateCmdLine(const std::string &cmdLine);
 
+std::string TrimString(const std::string& str);
+
 #endif //ANLINOS_UTILS_HPP

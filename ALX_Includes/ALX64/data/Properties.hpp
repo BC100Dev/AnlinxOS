@@ -6,6 +6,8 @@
 #include <optional>
 #include <stdexcept>
 
+#include "Registry.hpp"
+
 #define WRITE_PERMISSION_DENIED 0x9c2a5950
 #define WRITE_SERVICE_ERROR 0x9c2a5951
 #define WRITE_SERVICE_DENIED 0x9c2a5952

@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <filesystem>
 
 namespace ALX::Linux {
 
@@ -32,8 +33,7 @@ namespace ALX::Linux {
 
     struct ModuleFD {
         Module mod;
-        int fd;
-        std::string path;
+        std::filesystem::path path;
         std::vector<std::string> params;
         SyscallInsertion insertion = FINIT_MODULE;
 
@@ -45,13 +45,13 @@ namespace ALX::Linux {
         bool forceLoad = false;
     };
 
-    ModuleFD GetModuleData(const std::string &path);
+    ModuleFD GetModuleData(const std::filesystem::path &path);
 
     int LoadModule(const ModuleFD &fd);
 
     int LoadModule(const ModuleFD &fd, int flags);
 
-    void UnloadModule(const std::string &name);
+    void UnloadModule(const std::filesystem::path &name);
 
     std::vector<Module> ListModules();
 

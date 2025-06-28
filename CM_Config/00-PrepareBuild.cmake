@@ -1,6 +1,6 @@
 # To make sure that we do not clutter everything within the "Builds/(architecture)" directory,
 # we want to have all targets be placed within "Builds/(architecture)/BundleBuild"
-set(OUTPUT_DIRECTORY_ROOT "${CMAKE_BINARY_DIR}/BundleBuild")
+set(OUTPUT_DIRECTORY_ROOT "${CMAKE_CURRENT_BINARY_DIR}/BundleBuild")
 set(OUTPUT_DIRECTORY_I_BOOT "${OUTPUT_DIRECTORY_ROOT}/initramfs")
 set(OUTPUT_DIRECTORY_D_BOOT "${OUTPUT_DIRECTORY_ROOT}/boot")
 set(OUTPUT_DIRECTORY_SYSTEM "${OUTPUT_DIRECTORY_ROOT}/system")

@@ -15,4 +15,4 @@ itself, then at that point, it will turn into the ALX-Shared Library, moving the
 the ALX-Shared (because get it, it's shared code...?)
 
 Other than that, I don't have anything else to report for this library, neither for the OS...
-well, except that I'm still working on it.
+well, except that I'm still working on it. You can see this library as a WinAPI alike.
