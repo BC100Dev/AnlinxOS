@@ -5,7 +5,7 @@ Scratch) into a fully customized idea. This operating system aims to merge the b
 from other operating systems.
 
 - Windows containing the Compatibility Layer
-- Linux on the core itself (yes, it is a kernel)
+- Linux on the core itself (forked from [torvalds repo](https://github.com/torvalds/linux))
 - Android being virtualized on the Type-1 Layer (see `wine` and
   [`alde`](https://github.com/BC100Dev/alde))
   - Quick explanation, `alde` is similar to `wine` that translates Android calls to glibc
