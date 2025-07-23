@@ -47,11 +47,11 @@ namespace ALX64 {
 
     /**
      * Retrieves the System Property associated with a specific system class.
-     * @param sr The System Registry class (string placeholder)
+     * @param sr The System Registry class
      * @param sp The System Property Key Name
      * @return a specific value type, depending on type the output can be served with
      */
-    std::any GetSystemProperty(const std::string &sr, const std::string &sp);
+    std::any GetSystemProperty(SystemRegistry &sr, const std::string &sp);
 
     /**
      * Retrieves a property from a service by calling it on the service registry, which fetches the corresponding properties from a
@@ -63,23 +63,23 @@ namespace ALX64 {
      * </ul>
      *
      * @param sn service name itself
-     * @param sr the service registry (string placeholder)
+     * @param sr the service registry
      * @param pf property file name
      * @param pk property key name
      * @return a valid response data
      * @throws PropertyReadError if the property retrieval fails
      * @throws std::filesystem::filesystem_error if the Service Manager failed to read the service
      */
-    std::any GetServiceProperty(const std::string &sn, const std::string &sr,
+    std::any GetServiceProperty(const std::string &sn, ServiceRegistry &sr,
                                 const std::string &pf, const std::string &pk);
 
     /**
      * Retrieves a property from a specific user by calling onto the User Registry
-     * @param ur the User Registry itself (string placeholder)
+     * @param ur the User Registry itself
      * @param pk property key name
      * @return a value containing the property data
      */
-    std::any GetUserProperty(const std::string &ur, const std::string &pk);
+    std::any GetUserProperty(UserRegistry &ur, const std::string &pk);
 
     /**
      * Sets a specific system property.
@@ -87,11 +87,11 @@ namespace ALX64 {
      * Please do note that not every system property can be written by every user. Be mindful, as to what process this
      * gets called upon, since certain ones are only accessible by the Service Manager, the System Initialization Process
      * or certain system-signed executables.
-     * @param sr The System Registry class (string placeholder)
+     * @param sr The System Registry class
      * @param sp The System Property Key Name
      * @param d the property data itself
      */
-    void SetSystemProperty(const std::string &sr, const std::string &sp, const std::any &d);
+    void SetSystemProperty(SystemRegistry &sr, const std::string &sp, const std::any &d);
 
     /**
      * Attempts to write a property to a service, effectively calling the service handler via the Service Manager to its corresponding
@@ -100,23 +100,23 @@ namespace ALX64 {
      * which might require the service to be restarted, if the change does not happen immediately.
      *
      * @param sn service name itself
-     * @param sr the service registry (string placeholder)
+     * @param sr the service registry
      * @param pf property file name
      * @param pk property key name
      * @param d property data
      * @throws PropertyReadError if the property retrieval fails
      * @throws std::filesystem::filesystem_error if the Service Manager failed to read the service
      */
-    void SetServiceProperty(const std::string &sn, const std::string &sr, const std::string &pf,
+    void SetServiceProperty(const std::string &sn, ServiceRegistry &sr, const std::string &pf,
                             const std::string &pk, const std::any &d);
 
     /**
      * Writes a property for a specific user via their perspective User Registry
-     * @param ur the User Registry itself (string placeholder)
+     * @param ur the User Registry itself
      * @param pk property key name
      * @param d property data
      */
-    void SetUserProperty(const std::string &ur, const std::string &pk, const std::any& d);
+    void SetUserProperty(UserRegistry &ur, const std::string &pk, const std::any& d);
 
 }
 

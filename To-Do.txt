@@ -3,6 +3,7 @@ Legend:
 [-] = In Progress
 [?] = Unknown State
 [X] = Finished
+[F] = Finished with caveats (e.g. not fully finished to the needed/wanted desires)
 [H] = Halted
 [R] = Marked for Removal
 
@@ -22,6 +23,9 @@ Legend:
   > we are also talking about multi-GPU handling. No idea, whether this will be fun or no
 [ ] Get the Desktop Environment running
 [ ] Provide compatibility for applications to be able to load older libraries
+[ ] Get the Boot Animation playing as part of a MP4 file, allowing frames and audio to be decoded in real time
+[ ] Get the OEM logo to show up during the init stages before handing over to boot animation
+  > ChatGPT revealed that the OEM logo is exposed via "/sys/firmware/acpi/bgrt/image"
 
 ##### Current Ideas (Mobile Core, stabilized in v5, probably) #####
 [ ] Port over the Desktop things to Mobile, effectively taking 6 months or probably more to port... ohgodpleasehelpme-

@@ -40,6 +40,8 @@ if (DEFINED BUILD_TESTS AND BUILD_TESTS)
             message(STATUS "Project Index successful: ${PROJECT_MODULE_ROOT}")
         endif ()
     endforeach ()
+
+    enable_testing()
 endif ()
 
 unset(PROJECT_MODULE_ROOT)

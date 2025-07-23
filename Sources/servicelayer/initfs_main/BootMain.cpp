@@ -158,19 +158,32 @@ int openShell(const std::vector<std::string> &args) {
     return rc;
 }
 
+int mount_special(const std::string& src, const std::string& dist, const std::string& fs) {
+    if (!fs::exists(dist))
+        fs::create_directories(dist);
+
+    return mount(src.c_str(), dist.c_str(), fs.c_str(), 0, nullptr);
+}
+
 int main(int argc, char **argv) {
+    // order of the PATH var:
+    // 1. point to the /System/bin directory (effectively gets symlinked to /System/x64 or /System/arm64, depending on the architecture)
+    // 2. default path of /System/x64
+    // 3. standard old-ass paths
+    setenv("PATH", "/System/bin:/System/x64:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin", 1);
+
     std::vector<std::string> args;
     for (int i = 0; i < argc; i++)
         args.emplace_back(argv[i]);
 
     if (is_init()) {
-        if (mount("dev", "/dev", "devtmpfs", 0, nullptr) != 0)
+        if (mount_special("dev", "/dev", "devtmpfs") != 0)
             std::cerr << "Failed to mount dev, error: " << errno << std::endl;
 
-        if (mount("proc", "/proc", "proc", 0, nullptr) != 0)
+        if (mount_special("proc", "/proc", "proc") != 0)
             std::cerr << "Failed to mount proc, error: " << errno << std::endl;
 
-        if (mount("sysfs", "/sys", "sysfs", 0, nullptr) != 0)
+        if (mount_special("sysfs", "/sys", "sysfs") != 0)
             std::cerr << "Failed to mount sysfs, error: " << errno << std::endl;
 
         if (fs::exists("/dev/sda1")) {
