@@ -17,6 +17,7 @@
 #include <vector>
 #include <fstream>
 #include <filesystem>
+#include <map>
 
 namespace ALX::Linux {
 
@@ -57,6 +58,8 @@ namespace ALX::Linux {
     int UnloadModule(const std::string &name);
 
     std::vector<Module> ListModules();
+
+    std::map<std::string, std::filesystem::path> ListAvailableModules();
 
 }
 

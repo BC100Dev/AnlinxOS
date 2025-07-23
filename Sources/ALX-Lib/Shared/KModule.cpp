@@ -3,9 +3,7 @@
 #include <AnlinxOS/Shared/Utils.hpp>
 
 #include <sys/syscall.h>
-#include <sys/types.h>
 #include <sys/mman.h>
-#include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <cstring>
@@ -17,14 +15,7 @@
 #include <sys/utsname.h>
 #include <iostream>
 
-
-static std::string vermagic_data() {
-    struct utsname u{};
-    if (uname(&u) != 0)
-        return "";
-
-    return u.release;
-}
+// TODO: expand "GetModuleData" and "ListAvailableModules" for not locking behind explicit .ko files
 
 namespace ALX::Linux {
 
@@ -271,6 +262,37 @@ namespace ALX::Linux {
         }
 
         return ret;
+    }
+
+    std::map<std::string, std::filesystem::path> ListAvailableModules() {
+        std::map<std::string, std::filesystem::path> modsAvail;
+
+        struct utsname uts{};
+        if (uname(&uts) != 0) {
+            std::cerr << "[KERNEL] uname error, " << errno << std::endl;
+            return modsAvail;
+        }
+
+        std::vector<std::string> dirs = {
+                "/lib/module/" + std::string(uts.release) + "/kernel",
+                "/System/base/lib/modules/" + std::string(uts.release) + "/kernel"
+        };
+
+        for (const auto& dir : dirs) {
+            for (const auto& entry : std::filesystem::recursive_directory_iterator(dir)) {
+                if (!entry.is_regular_file() || entry.path().extension() != ".ko")
+                    continue;
+
+                try {
+                    ModuleFD fd = GetModuleData(entry.path());
+                    modsAvail[fd.mod.name] = entry.path();
+                } catch (const std::exception& e) {
+                    std::cerr << "[KERNEL] scanning modules for entry " << entry.path().string() << " failed" << std::endl;
+                }
+            }
+        }
+
+        return modsAvail;
     }
 
 }
