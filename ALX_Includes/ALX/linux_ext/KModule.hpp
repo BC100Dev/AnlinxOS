@@ -8,6 +8,10 @@
 #define MODULE_INVALID_FORMAT 0x100004
 #define MODULE_NOT_FOUND 0x100005
 #define MODULE_INSERTION_DISCOURAGED 0x100006
+#define MODULE_ALREADY_LOADED 0x100007
+#define MODULE_SYSTEM_FAILURE 0x100008
+#define MODULE_UNDEFINED_ERROR 0x100009
+#define MODULE_NOT_LOADED 0x100010
 
 #include <string>
 #include <vector>
@@ -35,7 +39,6 @@ namespace ALX::Linux {
         Module mod;
         std::filesystem::path path;
         std::vector<std::string> params;
-        SyscallInsertion insertion = FINIT_MODULE;
 
         /**
          * UNSAFE!!! This will patch out the vermagic temporarily due to the kernel expecting the EXACT kernel version.
@@ -51,7 +54,7 @@ namespace ALX::Linux {
 
     int LoadModule(const ModuleFD &fd, int flags);
 
-    void UnloadModule(const std::filesystem::path &name);
+    int UnloadModule(const std::string &name);
 
     std::vector<Module> ListModules();
 

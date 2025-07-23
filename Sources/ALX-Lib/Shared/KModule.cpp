@@ -15,6 +15,7 @@
 #include <cerrno>
 #include <elf.h>
 #include <sys/utsname.h>
+#include <iostream>
 
 
 static std::string vermagic_data() {
@@ -110,7 +111,7 @@ namespace ALX::Linux {
             }
         }
 
-        if ((modinfo_size == -1 && modinfo_offset == -1) && modinfo_size > 0) {
+        if (modinfo_size > 0 && modinfo_offset != -1) {
             std::vector<char> modinfo(modinfo_size);
             file.seekg(modinfo_offset, std::ios::beg);
             file.read(modinfo.data(), modinfo.size());
@@ -162,54 +163,114 @@ namespace ALX::Linux {
         if (fd < 0)
             return MODULE_NOT_FOUND;
 
-        struct stat st{};
-        if (fstat(fd, &st) < 0) {
-            close(fd);
-            return MODULE_INVALID_FORMAT;
-        }
-
-        void* image = mmap(nullptr, st.st_size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
-        if (image == MAP_FAILED) {
-            close(fd);
-            return MODULE_INVALID_FORMAT;
-        }
-
         int ret = MODULE_ACTION_SUCCESS;
-        long sysret = -1;
 
         if (mfd.forceLoad) {
-            auto* ehdr = reinterpret_cast<Elf64_Ehdr*>(image);
-            if (memcmp(ehdr->e_ident, ELFMAG, SELFMAG) == 0 && ehdr->e_ident[EI_CLASS] == ELFCLASS64) {
-                auto* shdrs = reinterpret_cast<Elf64_Shdr*>(
-                        reinterpret_cast<uint8_t*>(image) + ehdr->e_shoff);
-                Elf64_Shdr* sh_str = &shdrs[ehdr->e_shstrndx];
-                const char* shstrtab = reinterpret_cast<const char*>(
-                        reinterpret_cast<uint8_t*>(image) + sh_str->sh_offset);
+            std::cerr << "[STUB] module force load not implemented" << std::endl;
+            return MODULE_INSERTION_DISCOURAGED;
+        }
 
-                for (int i = 0; i < ehdr->e_shnum; ++i) {
-                    std::string secname(&shstrtab[shdrs[i].sh_name]);
-                    if (secname == ".modinfo") {
-                        char* modinfo = reinterpret_cast<char*>(
-                                reinterpret_cast<uint8_t*>(image) + shdrs[i].sh_offset);
+        std::string str;
+        const char* params;
+        {
+            std::stringstream sParams;
+            for (size_t i = 0; i < mfd.params.size(); i++) {
+                sParams << mfd.params[i];
 
-                        size_t modinfo_size = shdrs[i].sh_size;
-                        size_t off = 0;
-                        while (off < modinfo_size) {
-                            size_t len = strnlen(&modinfo[off], modinfo_size - off);
-                            if (len == 0) { off++; continue; }
-                            std::string entry(&modinfo[off], len);
-                            if (entry.find("vermagic=") == 0) {
-                                memset(&modinfo[off], 0, len);
-                                break;
-                            }
+                if (i != mfd.params.size() - 1)
+                    sParams << " ";
+            }
 
-                            off += len + 1;
-                        }
-                        break;
-                    }
-                }
+            str = sParams.str();
+            params = str.c_str();
+        }
+
+        long sysret = syscall(SYS_finit_module, fd, params, flags);
+        if (sysret != 0) {
+            switch (errno) {
+                case 0:
+                    ret = MODULE_ACTION_SUCCESS;
+                    break;
+                case EPERM:
+                case EACCES:
+                case ENOEXEC:
+                    ret = MODULE_PERMISSION_DENIED;
+                    break;
+                case EINVAL:
+                case EFAULT:
+                    ret = MODULE_INVALID_FORMAT;
+                    break;
+                case ENOKEY:
+                case EBUSY:
+                    ret = MODULE_INSERTION_DISCOURAGED;
+                    break;
+                case EEXIST:
+                    ret = MODULE_ALREADY_LOADED;
+                    break;
+                case ENOSYS:
+                case ENOSPC:
+                case ENOMEM:
+                    ret = MODULE_SYSTEM_FAILURE;
+                    break;
+                default:
+                    ret = MODULE_UNDEFINED_ERROR;
+                    break;
             }
         }
+
+        close(fd);
+
+        return ret;
+    }
+
+    int UnloadModule(const std::string& name) {
+        std::vector<Module> mods = ListModules();
+        bool found = false;
+        for (const auto& mod : mods) {
+            if (mod.name == name) {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found)
+            return MODULE_NOT_LOADED;
+
+        int ret = MODULE_ACTION_SUCCESS;
+        long sysret = syscall(SYS_delete_module, name.c_str(), 0);
+        if (sysret != 0) {
+            switch (errno) {
+                case 0:
+                    ret = MODULE_ACTION_SUCCESS;
+                    break;
+                case EPERM:
+                case EACCES:
+                case ENOEXEC:
+                    ret = MODULE_PERMISSION_DENIED;
+                    break;
+                case EINVAL:
+                case EFAULT:
+                    ret = MODULE_INVALID_FORMAT;
+                    break;
+                case ENOKEY:
+                case EBUSY:
+                    ret = MODULE_INSERTION_DISCOURAGED;
+                    break;
+                case EEXIST:
+                    ret = MODULE_ALREADY_LOADED;
+                    break;
+                case ENOSYS:
+                case ENOSPC:
+                case ENOMEM:
+                    ret = MODULE_SYSTEM_FAILURE;
+                    break;
+                default:
+                    ret = MODULE_UNDEFINED_ERROR;
+                    break;
+            }
+        }
+
+        return ret;
     }
 
 }
