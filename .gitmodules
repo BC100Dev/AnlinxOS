@@ -1,10 +1,6 @@
 [submodule "External/linux-kernel"]
 	path = External/linux-kernel
 	url = https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
-[submodule "External/busybox"]
-	path = External/busybox
-	url = https://git.busybox.net/busybox
-	branch = 1_36_stable
 [submodule "External_Sources/pelf"]
 	path = External_Sources/pelf
 	url = https://github.com/BC100Dev/pelf
