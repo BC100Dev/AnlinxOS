@@ -20,5 +20,3 @@ file(MAKE_DIRECTORY "${OUTPUT_DIRECTORY_RECVRY}")
 file(MAKE_DIRECTORY "${OUTPUT_DIRECTORY_TESTS}")
 
 include(ProcessorCount)
-
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/ALX_Includes")

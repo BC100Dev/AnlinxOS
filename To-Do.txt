@@ -27,5 +27,11 @@ Legend:
 [ ] Get the OEM logo to show up during the init stages before handing over to boot animation
   > ChatGPT revealed that the OEM logo is exposed via "/sys/firmware/acpi/bgrt/image"
 
+##### PERMISSIONS NEEDED TO INCLUDE #####
+[ ] Require apps to always prompt the user into installing applications, both Android and native
+[ ] Runtime permission system that is similar to Android
+[ ] Require all binaries to have ".prmseq" ELF header
+[ ] Provide "clang" and "clang++" compilers for AnlinxOS that require the use of ".prmseq" ELF headers to explicitly require permissions
+
 ##### Current Ideas (Mobile Core, stabilized in v5, probably) #####
 [ ] Port over the Desktop things to Mobile, effectively taking 6 months or probably more to port... ohgodpleasehelpme-

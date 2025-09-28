@@ -1,0 +1,5 @@
+#include "FuncHeader.hpp"
+
+int cp_func(int argc, char** argv, char** env) {
+    return 0;
+}

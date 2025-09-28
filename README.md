@@ -10,27 +10,29 @@ from other operating systems.
   [`alde`](https://github.com/BC100Dev/alde))
   - Quick explanation, `alde` is similar to `wine` that translates Android calls to glibc
     calls. Initially, I archived it because it was no longer in development, thinking that
-    I could reuse this concept in this OS. Maybe I'll unarchive that project, eventually
-    copying the sources from here over to that repository, but only time will tell.
+    I could reuse this concept in this OS, while rebranding it to LSA (Linux Subsystem for
+    Android). This will heavily be a required component, especially on Mobile spaces.
 
-This will break quite many packages that would be ported, since there are ideas on refining
-the FHS (File Hierarchy System) (`/`) itself. The idea behind it is to make the File Structure
-more beginner-friendly. Certain directories like `/dev`, `/sys` and `/proc` will stay, but I
-will mainly reconstruct the use of `/usr`, `/home` and other directories into Android
-equivalents. Say, we got the System, I pack the System in a read-only `/System` partition. For
-all the user files and such, we pack that into `/Data`, where the `/home` directory gets
-replaced with a symlink of `/Users` that point towards `/Data/UserDir` (I got `/Data/Users`
-reserved for something else). This itself already looks better. To allow Factory Resets that
-Android does, we also implement a `/Recovery` partition. Oh, and `bin`, along with `lib` no
-longer exists. Say hello to `/System/x64`. You can think of it as a System32-alike directory.
+This will break quite many packages that would be ported, since this OS will take a different
+turn with the FHS (File Hierarchy System), which is known as the root (`/`) structure. Remember
+`/bin` and so? Yeah, forget about them, we got `/System`, `/Recovery`, `/Data`, `/Cache` and
+`/Users`, each replacing every single component that the old FHS remained. The only thing that
+cannot be replaced are `/dev`, `/proc` and `/sys`, unless if I somehow manage to do that, then
+this OS will get even more controversy. Oh, and remember `bin` and `lib` being separated? Say
+hello to `/System/x64`, merging both of the directories into one, making a System32 alike
+directory. Obviously, that `x64` can be replaced with `arm64`, but you will still witness
+`/System/bin`, which is just the symlink to the directory of the system architecture of the
+kernel + installation configuration.
 
-Now, I mentioned me having a reserved `/Data/Users`, and you may wonder, "Chris, what the hell
-should that even be?" Don't worry, uncle BC100Dev here will explain. I decided to completely
-nuke `/etc/passwd`, along with its `shadow` equivalent into its new User Management System,
-which will end up being at that particular place. That itself is a directory, in which I will
-have `login.d` (for users that can be logged in) and `services.d` (service-required users).
-Something similar will also be placed under `/System/base/users`, where that would only contain
-`services.d` and `system.d` (pun intended :laughing:)
+Now, `/Data/config` will take a heavy role. If you have hated the Windows registry, then you
+will hate this concept too because I am introducing LRGX (Linux Registry). This will house the
+entirety of the system configurations, although probably not everything. However, this also
+nukes `/etc/passwd` and `/etc/shadow` (have you forgotten that `/etc` also doesn't exist?) for
+the equivalent of `/Data/config/userbase.lrgx`. By the way, yes, you can have your own Linux
+Registry System being in place, along with creating your own Registries much easier. Originally,
+I had `/Users` being a symlink to `/Data/UserDir`, but that ended up being not-so-great idea, so
+`/Users` is its own dependent directory... which mimics `/home` either way. Oh, and before I
+forget... no systemd. Be glad that I am getting rid for you, in case you hated systemd before.
 
 In other words, you can see that AnlinxOS is not another Linux distro fork (like Ubuntu being
 linked to Debian), LineageOS being AOSP-equivalent and so on. Nope, AnlinxOS is a
@@ -39,9 +41,9 @@ self-independent OS.
 ---
 
 ## Key Concepts
-- **Built on CLFS**: This OS does not contain a repackaged distribution base, like ZorinOS,
-  taking the distro base of Ubuntu. AnlinxOS is constructed using CLFS (Coding Linux from Scratch)
-  for complete control for each component.
+- **Built on LFS**: This OS does not contain a repackaged distribution base, like ZorinOS,
+  taking the distro base of Ubuntu. AnlinxOS is constructed using LFS (Linux from Scratch) for
+  complete control for each component.
 - **Android Framework being included**: Unlike AOSP-based systems, AnlinxOS does not depend on
   the Android Runtime, SystemUI or typical Android HALs. This means that the Android Framework
   Support is translated to the glibc Layer (see [`alde`](https://github.com/BC100Dev/alde) for
