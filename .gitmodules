@@ -5,3 +5,6 @@
 	path = External/busybox
 	url = https://git.busybox.net/busybox
 	branch = 1_36_stable
+[submodule "External_Sources/pelf"]
+	path = External_Sources/pelf
+	url = https://github.com/BC100Dev/pelf
