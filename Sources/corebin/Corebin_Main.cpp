@@ -13,7 +13,7 @@ struct Executor {
 Executor makeExecutor(int argc, char **argv, char **env) {
     std::vector<std::string> v;
 
-    for (int i = 1; i < argc; i++)
+    for (int i = 0; i < argc; i++)
         v.emplace_back(argv[i]);
 
     char **c_argv = new char *[v.size() + 1];

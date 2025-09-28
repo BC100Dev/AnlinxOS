@@ -128,7 +128,6 @@ int unexpand_func(int, char**, char**);
 int uniq_func(int, char**, char**);
 int unlink_func(int, char**, char**);
 int uptime_func(int, char**, char**);
-int users_func(int, char**, char**);
 int vdir_func(int, char**, char**);
 int w_func(int, char**, char**);
 int watch_func(int, char**, char**);

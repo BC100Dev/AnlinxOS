@@ -124,7 +124,6 @@ std::map<std::string, std::function<int(int, char**, char**)>> funcMap = {
     { "uniq", uniq_func },
     { "unlink", unlink_func },
     { "uptime", uptime_func },
-    { "users", users_func },
     { "vdir", vdir_func },
     { "w", w_func },
     { "watch", watch_func },
