@@ -54,25 +54,29 @@ function(Symlink TARGET_NAME SOURCE_FILE SYMLINK_NAME SYMLINK_DIR)
     )
 endfunction()
 
-function(SymlinkTarget TARGET NEW_TARGET LINK_PATH)
+function(Symlink TARGET SRC_BASENAME NEW_TARGET LINK_PATH)
     if (NOT EXISTS "${LINK_PATH}")
         file(MAKE_DIRECTORY "${LINK_PATH}")
     endif ()
 
-    add_custom_command(TARGET ${TARGET}
-            POST_BUILD COMMAND ${CMAKE_COMMAND} -E create_symlink $<TARGET_FILE:${TARGET}> "${LINK_PATH}/${NEW_TARGET}"
-            COMMENT "Symlinking ${NEW_TARGET} -> $<TARGET_FILE:${TARGET}>")
+    add_custom_command(
+            TARGET ${TARGET}
+            POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E create_symlink
+            "${SRC_BASENAME}"
+            "${LINK_PATH}/${NEW_TARGET}"
+            VERBATIM
+            COMMENT "Symlinking ${NEW_TARGET} -> ${SRC_BASENAME}"
+    )
 endfunction()
 
 function(CopyTarget TARGET COPY_NAME COPY_DIR)
     file(MAKE_DIRECTORY "${COPY_DIR}")
 
-    add_custom_command(
-            TARGET ${TARGET}
+    set(COPYING_TARGET_SRC "$<TARGET_FILE:${TARGET}>")
+
+    add_custom_command(TARGET ${TARGET}
             POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy
-            $<TARGET_FILE:${TARGET}>
-            "${COPY_DIR}/${COPY_NAME}"
-            COMMENT "Copying $<TARGET_FILE:${TARGET}> -> ${COPY_DIR}/${COPY_NAME}"
-    )
+            COMMAND ${CMAKE_COMMAND} -E copy ${COPYING_TARGET_SRC} "${COPY_DIR}/${COPY_NAME}"
+            COMMENT "Copying ${COPYING_TARGET_SRC} -> ${COPY_DIR}/${COPY_NAME}")
 endfunction()

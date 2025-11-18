@@ -1,8 +1,11 @@
-#include <iostream>
-#include <vector>
 #include <cstring>
+#include <iostream>
+#include <filesystem>
+#include <vector>
 
 #include "libs/FuncHeader.hpp"
+
+namespace fs = std::filesystem;
 
 struct Executor {
     int argc;
@@ -40,7 +43,9 @@ void freeExec(Executor &e) {
 }
 
 int main(int argc, char **argv, char **env) {
-    auto fnd = funcMap.find(argv[0]);
+    std::string execName = fs::path(argv[0]).filename().string();
+
+    auto fnd = funcMap.find(execName);
     if (fnd != funcMap.end())
         return fnd->second(argc, argv, env);
 
@@ -66,7 +71,7 @@ int main(int argc, char **argv, char **env) {
         return 0;
     }
 
-    fnd = funcMap.find(argv[1]);
+    fnd = funcMap.find(execName);
     if (fnd != funcMap.end()) {
         Executor exec = makeExecutor(argc - 1, argv + 1, env);
         int ret = fnd->second(exec.argc, exec.argv, exec.env);

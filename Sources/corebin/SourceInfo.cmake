@@ -23,17 +23,17 @@ add_executable(corebin ${Corebin_Sources})
 target_link_options(corebin PRIVATE -static)
 SetTargetOutputDir(corebin ${OUTPUT_DIRECTORY_SYSTEM}/x64)
 foreach (COREBIN_NAME ${COREBIN_NAMES})
-    SymlinkTarget(corebin ${COREBIN_NAME} "${OUTPUT_DIRECTORY_SYSTEM}/x64")
+    Symlink(corebin "corebin" ${COREBIN_NAME} "${OUTPUT_DIRECTORY_SYSTEM}/x64")
 endforeach ()
 
 # 2 - Copy over the core binaries to recovery
 CopyTarget(corebin corebin ${OUTPUT_DIRECTORY_RECVRY}/bin)
 foreach (COREBIN_NAME ${COREBIN_NAMES})
-    Symlink(corebin "${OUTPUT_DIRECTORY_RECVRY}/bin/corebin" ${COREBIN_NAME} "${OUTPUT_DIRECTORY_RECVRY}/bin")
+    Symlink(corebin "corebin" ${COREBIN_NAME} "${OUTPUT_DIRECTORY_RECVRY}/bin")
 endforeach ()
 
 # 3 - Copy over the core binaries to initramfs
 CopyTarget(corebin corebin ${OUTPUT_DIRECTORY_I_BOOT}/bin)
 foreach (COREBIN_NAME ${COREBIN_NAMES})
-    Symlink(corebin "${OUTPUT_DIRECTORY_I_BOOT}/bin/corebin" ${COREBIN_NAME} "${OUTPUT_DIRECTORY_I_BOOT}/bin")
+    Symlink(corebin "corebin" ${COREBIN_NAME} "${OUTPUT_DIRECTORY_I_BOOT}/bin")
 endforeach ()
