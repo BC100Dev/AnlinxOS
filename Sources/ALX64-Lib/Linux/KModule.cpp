@@ -1,6 +1,5 @@
-#include <ALX64/Linux/KModule.hpp>
-
-#include <AnlinxOS/Shared/Utils.hpp>
+#include <ALX64/KModule.hpp>
+#include <ALX64/Utilities.hpp>
 
 #include <sys/syscall.h>
 #include <sys/mman.h>
@@ -17,7 +16,7 @@
 
 // TODO: expand "GetModuleData" and "ListAvailableModules" for not locking behind explicit .ko files
 
-namespace ALX::Linux {
+namespace ALX64::Linux {
 
     std::vector<Module> ListModules() {
         std::vector<Module> modules;
@@ -40,7 +39,7 @@ namespace ALX::Linux {
                 std::stringstream deps(dependencies);
                 std::string dep;
                 while (std::getline(deps, dep, ','))
-                    mod.depends.push_back(TrimString(dep));
+                    mod.depends.push_back(ALX64::Utils::TrimString(dep));
             }
 
             modules.push_back(mod);
@@ -132,7 +131,7 @@ namespace ALX::Linux {
                     std::string dep;
 
                     while (std::getline(deps, dep, ','))
-                        fd.mod.depends.push_back(TrimString(dep));
+                        fd.mod.depends.push_back(ALX64::Utils::TrimString(dep));
                 }
             }
         }

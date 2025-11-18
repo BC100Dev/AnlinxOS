@@ -9,9 +9,9 @@
 #include <sys/reboot.h>
 #include <linux/reboot.h>
 
-#include "Cmdline.hpp"
+#include "BootProcedure.hpp"
 
-#include <AnlinxOS/Shared/Utils.hpp>
+#include <ALX64/Utilities.hpp>
 
 namespace fs = std::filesystem;
 
@@ -25,7 +25,7 @@ BinaryInfo find_binary(const std::string &binName) {
 
     const char *env = std::getenv("PATH");
     std::stringstream pathEnv(
-            env ? env : "/System/x64:/System/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin");
+            env ? env : "/System/bin:/System/x64:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin");
     std::string currentPathEntry;
 
     while (std::getline(pathEnv, currentPathEntry, ':')) {
@@ -76,7 +76,7 @@ int openShell(const std::vector<std::string> &args) {
         if (cmdline.empty())
             continue;
 
-        std::vector<std::string> tokens = translateCmdLine(cmdline);
+        std::vector<std::string> tokens = ALX64::Utils::TranslateStringToCommandline(cmdline);
         if (tokens.empty())
             continue;
 
@@ -99,7 +99,7 @@ int openShell(const std::vector<std::string> &args) {
 
         if (tokens[0] == "cmdline") {
             try {
-                std::vector<BootParam> params = parseCommandLineFile(NEW_PATH);
+                std::vector<BootStage::BootParam> params = BootStage::getKernelBootArguments();
                 if (!params.empty()) {
                     for (const auto &param: params) {
                         if (param.flag)

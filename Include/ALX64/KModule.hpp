@@ -1,5 +1,5 @@
-#ifndef ANLINXOS_KMODULE_HPP
-#define ANLINXOS_KMODULE_HPP
+#ifndef ALX64_KMODULE_HPP
+#define ALX64_KMODULE_HPP
 
 #define MODULE_ACTION_SUCCESS 0x100000
 #define MODULE_VERMAGIC_MISMATCH 0x100001
@@ -19,7 +19,7 @@
 #include <filesystem>
 #include <map>
 
-namespace ALX::Linux {
+namespace ALX64::Linux {
 
     enum SyscallInsertion {
         FINIT_MODULE = 0,
@@ -63,4 +63,4 @@ namespace ALX::Linux {
 
 }
 
-#endif //ANLINXOS_KMODULE_HPP
+#endif //ALX64_KMODULE_HPP

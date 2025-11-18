@@ -1,8 +1,8 @@
-#include <ALX64/Linux/KModule.hpp>
+#include "ALX64/KModule.hpp"
 
 #include <iostream>
 
-using namespace ALX::Linux;
+using namespace ALX64::Linux;
 
 int main(int argc, char** argv) {
     if (argc == 1) {

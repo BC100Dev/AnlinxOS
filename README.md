@@ -34,19 +34,6 @@ I had `/Users` being a symlink to `/Data/UserDir`, but that ended up being not-s
 `/Users` is its own dependent directory... which mimics `/home` either way. Oh, and before I
 forget... no systemd. Be glad that I am getting rid for you, in case you hated systemd before.
 
-Ever thought running processes is already bad enough, when it comes to libraries? No? Well fuck
-that either way, I am introducing [PELF](https://github.com/BC100Dev/PELF), another fucking ELF
-format that saves your sanity. Windows, Android and macOS already has a way of packaging resources
-into executables, even though Android and macOS use packages in some way either way. Windows has
-the `.rsrc` PE header that allows programs to embed resources in. With PELF, I decided to plan
-out in making a custom ELF file that allows you to not only compile resources right into the PELF
-file, but also allows you to extract it with the use of `libpelf.hpp`. Is that project bad enough
-already? No? Then you'll hate me for even thinking of introducing another linker for it because
-making a packager for it wasn't a good idea in the first place. However, a security feature...
-well, if you even call it a "security feature" (I know you Microsoft haters) is the ELF signing
-ability, meaning that you can sign the ELF file itself. I am still not sure, as to how to
-accomplish the signature idea, but I will somehow bring it, don't you worry.
-
 In other words, you can see that AnlinxOS is not another Linux distro fork (like Ubuntu being
 linked to Debian), LineageOS being AOSP-equivalent and so on. Nope, AnlinxOS is a
 self-independent OS.

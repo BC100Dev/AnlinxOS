@@ -37,3 +37,4 @@ Build*
 Output*
 cmake-build*
 .root
+!Scripts/*

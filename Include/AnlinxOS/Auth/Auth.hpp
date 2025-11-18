@@ -1,4 +1,0 @@
-#ifndef ANLINOS_AUTH_HPP
-#define ANLINOS_AUTH_HPP
-
-#endif //ANLINOS_AUTH_HPP
