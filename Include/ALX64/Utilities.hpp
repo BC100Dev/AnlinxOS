@@ -4,12 +4,8 @@
 #include <string>
 #include <vector>
 
-namespace ALX64::Utils {
+std::vector<std::string> TranslateStringToCommandline(const std::string &cmdLine);
 
-    std::vector<std::string> TranslateStringToCommandline(const std::string &cmdLine);
-
-    std::string TrimString(const std::string& str);
-
-}
+std::string TrimString(const std::string &str);
 
 #endif //ALX64_UTILITIES_HPP

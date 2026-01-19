@@ -3,15 +3,13 @@
 
 #include <string>
 
-namespace ALX64 {
+struct IPCServer {
+    long long ident;
+    int pid;
+    std::string name;
+};
 
-    struct IPCServer {
-        int pid;
-        std::string name;
-    };
-
-    struct IPCClient {};
-
-}
+struct IPCClient {
+};
 
 #endif //ALX64_IPC_HPP

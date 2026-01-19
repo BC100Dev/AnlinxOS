@@ -1,6 +1,4 @@
 #ifndef ALX64_WLWINDOWS_HPP
 #define ALX64_WLWINDOWS_HPP
 
-
-
 #endif //ALX64_WLWINDOWS_HPP

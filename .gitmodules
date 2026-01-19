@@ -1,6 +1,6 @@
 [submodule "External/linux-kernel"]
 	path = External/linux-kernel
 	url = https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
-[submodule "External_Sources/pelf"]
-	path = External_Sources/pelf
-	url = https://github.com/BC100Dev/pelf
+[submodule "External/zlib"]
+	path = External/zlib
+	url = https://github.com/madler/zlib

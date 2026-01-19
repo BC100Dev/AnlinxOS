@@ -36,8 +36,28 @@ endif ()
 message(STATUS "Sourcing up the Linux kernel")
 add_custom_target(linux-defconfig
         COMMAND make -C "${KERNEL_SOURCE_DIR}" ${KERNEL_COMPILE_FLAGS} defconfig
-        WORKING_DIRECTORY "${KERNEL_SOURCE_DIR}")
+        WORKING_DIRECTORY "${KERNEL_SOURCE_DIR}"
+        USES_TERMINAL
+        COMMENT "Preparing default configurations from the kernel")
 
 add_custom_target(linux
         COMMAND make -C "${KERNEL_SOURCE_DIR}" ${KERNEL_COMPILE_FLAGS}
-        WORKING_DIRECTORY "${KERNEL_SOURCE_DIR}")
+        WORKING_DIRECTORY "${KERNEL_SOURCE_DIR}"
+        USES_TERMINAL
+        COMMENT "Building linux kernel")
+
+add_custom_target(linux-modules_install-initramfs DEPENDS linux
+        COMMAND make -C "${KERNEL_SOURCE_DIR}" ${KERNEL_COMPILE_FLAGS} INSTALL_MOD_PATH="${OUTPUT_DIRECTORY_I_BOOT}/krnl" modules_install
+        WORKING_DIRECTORY "${KERNEL_SOURCE_DIR}"
+        USES_TERMINAL
+        COMMENT "Installing kernel modules to initramfs")
+
+add_custom_target(linux-modules_install-system DEPENDS linux
+        COMMAND make -C "${KERNEL_SOURCE_DIR}" ${KERNEL_COMPILE_FLAGS} INSTALL_MOD_PATH="${OUTPUT_DIRECTORY_SYSTEM}/core/krnl" modules_install
+        WORKING_DIRECTORY "${KERNEL_SOURCE_DIR}"
+        USES_TERMINAL
+        COMMENT "Installing kernel modules to system")
+
+add_custom_target(linux-modules_install DEPENDS linux linux-modules_install-initramfs linux-modules_install-system)
+add_custom_target(linux-defsuite DEPENDS linux-defconfig linux linux-modules_install)
+add_custom_target(linux-suite DEPENDS linux linux-modules_install)

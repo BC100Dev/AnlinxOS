@@ -24,7 +24,7 @@ namespace BootStage {
 
         std::string cmdline = buffer.str();
 
-        std::vector<std::string> tokens = ALX64::Utils::TranslateStringToCommandline(cmdline);
+        std::vector<std::string> tokens = TranslateStringToCommandline(cmdline);
 
         for (const auto& token : tokens) {
             auto pos = token.find('=');

@@ -16,282 +16,278 @@
 
 // TODO: expand "GetModuleData" and "ListAvailableModules" for not locking behind explicit .ko files
 
-namespace ALX64::Linux {
+std::vector<Module> ListModules() {
+    std::vector<Module> modules;
+    std::ifstream file("/proc/modules");
+    if (!file.is_open())
+        throw std::runtime_error("file read failed: /proc/modules (errno " + std::to_string(errno) + ")");
 
-    std::vector<Module> ListModules() {
-        std::vector<Module> modules;
-        std::ifstream file("/proc/modules");
-        if (!file.is_open())
-            throw std::runtime_error("file read failed: /proc/modules (errno " + std::to_string(errno) + ")");
+    std::string line;
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        std::string name, size, instances, dependencies, state, address;
 
-        std::string line;
-        while (std::getline(file, line)) {
-            std::istringstream iss(line);
-            std::string name, size, instances, dependencies, state, address;
+        if (!(iss >> name >> size >> instances >> dependencies >> state >> address))
+            continue;
 
-            if (!(iss >> name >> size >> instances >> dependencies >> state >> address))
-                continue;
+        Module mod;
+        mod.name = name;
 
-            Module mod;
-            mod.name = name;
-
-            if (dependencies != "-") {
-                std::stringstream deps(dependencies);
-                std::string dep;
-                while (std::getline(deps, dep, ','))
-                    mod.depends.push_back(ALX64::Utils::TrimString(dep));
-            }
-
-            modules.push_back(mod);
+        if (dependencies != "-") {
+            std::stringstream deps(dependencies);
+            std::string dep;
+            while (std::getline(deps, dep, ','))
+                mod.depends.push_back(TrimString(dep));
         }
 
-        return modules;
+        modules.push_back(mod);
     }
 
-    ModuleFD GetModuleData(const std::filesystem::path& path) {
-        if (!std::filesystem::exists(path))
-            throw std::runtime_error("module at \"" + path.string() + "\" not found");
+    return modules;
+}
 
-        ModuleFD fd;
-        fd.path = path;
+ModuleFD GetModuleData(const std::filesystem::path &path) {
+    if (!std::filesystem::exists(path))
+        throw std::runtime_error("module at \"" + path.string() + "\" not found");
 
-        std::ifstream file(path, std::ios::binary);
-        if (!file.is_open())
-            throw std::runtime_error("module open failed, errno: " + std::to_string(errno));
+    ModuleFD fd;
+    fd.path = path;
 
-        unsigned char e_ident[EI_NIDENT];
-        file.read(reinterpret_cast<char*>(e_ident), EI_NIDENT);
-        if (memcmp(e_ident, ELFMAG, SELFMAG) != 0)
-            return fd;
+    std::ifstream file(path, std::ios::binary);
+    if (!file.is_open())
+        throw std::runtime_error("module open failed, errno: " + std::to_string(errno));
 
-        if (e_ident[EI_CLASS] != ELFCLASS64) {
-            file.close();
+    unsigned char e_ident[EI_NIDENT];
+    file.read(reinterpret_cast<char *>(e_ident), EI_NIDENT);
+    if (memcmp(e_ident, ELFMAG, SELFMAG) != 0)
+        return fd;
 
-            throw std::runtime_error("module open failed: not a 64-bit kernel module");
-        }
-
-        file.seekg(0, std::ios::beg);
-        Elf64_Ehdr ehdr;
-        file.read(reinterpret_cast<char*>(&ehdr), sizeof(Elf64_Ehdr));
-
-        uint64_t shoff = ehdr.e_shoff;
-        uint16_t shentsize = ehdr.e_shentsize;
-        uint16_t shnum = ehdr.e_shnum;
-        uint16_t shstrndx = ehdr.e_shstrndx;
-
-        file.seekg(shoff, std::ios::beg);
-        std::vector<char> sh_buf(shentsize * shnum);
-        file.read(sh_buf.data(), sh_buf.size());
-
-        const auto* shdrs = reinterpret_cast<const Elf64_Shdr*>(sh_buf.data());
-        uint64_t shstr_size = shdrs[shstrndx].sh_size;
-        std::vector<char> shstrtab(shstr_size);
-        file.seekg(shdrs[shstrndx].sh_offset, std::ios::beg);
-        file.read(shstrtab.data(), shstr_size);
-
-        uint64_t modinfo_offset = -1;
-        uint64_t modinfo_size = -1;
-
-        for (uint64_t i = 0; i < shnum; i++) {
-            std::string secname(&shstrtab[shdrs[i].sh_name]);
-            if (secname == ".modinfo") {
-                modinfo_offset = shdrs[i].sh_offset;
-                modinfo_size = shdrs[i].sh_size;
-                break;
-            }
-        }
-
-        if (modinfo_size > 0 && modinfo_offset != -1) {
-            std::vector<char> modinfo(modinfo_size);
-            file.seekg(modinfo_offset, std::ios::beg);
-            file.read(modinfo.data(), modinfo.size());
-
-            size_t off = 0;
-            while (off < modinfo.size()) {
-                size_t end = off;
-                while (end < modinfo.size() && modinfo[end] != '\0') ++end;
-
-                std::string entry(&modinfo[off], end - off);
-                off = end + 1;
-                auto eq = entry.find('=');
-                if (eq == std::string::npos)
-                    continue;
-
-                std::string key = entry.substr(0, eq);
-                std::string val = entry.substr(eq + 1);
-
-                if (key == "name") fd.mod.name = val;
-                else if (key == "description") fd.mod.description = val;
-                else if (key == "author") fd.mod.author = val;
-                else if (key == "license") fd.mod.license = val;
-                else if (key == "srcversion") fd.mod.srcVersion = val;
-                else if (key == "vermagic") fd.mod.vermagic = val;
-                else if (key == "depends") {
-                    std::stringstream deps(val);
-                    std::string dep;
-
-                    while (std::getline(deps, dep, ','))
-                        fd.mod.depends.push_back(ALX64::Utils::TrimString(dep));
-                }
-            }
-        }
-
+    if (e_ident[EI_CLASS] != ELFCLASS64) {
         file.close();
 
-        return fd;
+        throw std::runtime_error("module open failed: not a 64-bit kernel module");
     }
 
-    int LoadModule(const ModuleFD& mfd) {
-        return LoadModule(mfd, 0);
+    file.seekg(0, std::ios::beg);
+    Elf64_Ehdr ehdr;
+    file.read(reinterpret_cast<char *>(&ehdr), sizeof(Elf64_Ehdr));
+
+    uint64_t shoff = ehdr.e_shoff;
+    uint16_t shentsize = ehdr.e_shentsize;
+    uint16_t shnum = ehdr.e_shnum;
+    uint16_t shstrndx = ehdr.e_shstrndx;
+
+    file.seekg(shoff, std::ios::beg);
+    std::vector<char> sh_buf(shentsize * shnum);
+    file.read(sh_buf.data(), sh_buf.size());
+
+    const auto *shdrs = reinterpret_cast<const Elf64_Shdr *>(sh_buf.data());
+    uint64_t shstr_size = shdrs[shstrndx].sh_size;
+    std::vector<char> shstrtab(shstr_size);
+    file.seekg(shdrs[shstrndx].sh_offset, std::ios::beg);
+    file.read(shstrtab.data(), shstr_size);
+
+    uint64_t modinfo_offset = -1;
+    uint64_t modinfo_size = -1;
+
+    for (uint64_t i = 0; i < shnum; i++) {
+        std::string secname(&shstrtab[shdrs[i].sh_name]);
+        if (secname == ".modinfo") {
+            modinfo_offset = shdrs[i].sh_offset;
+            modinfo_size = shdrs[i].sh_size;
+            break;
+        }
     }
 
-    int LoadModule(const ModuleFD& mfd, int flags) {
-        if (!std::filesystem::exists(mfd.path))
-            return MODULE_NOT_FOUND;
+    if (modinfo_size > 0 && modinfo_offset != -1) {
+        std::vector<char> modinfo(modinfo_size);
+        file.seekg(modinfo_offset, std::ios::beg);
+        file.read(modinfo.data(), modinfo.size());
 
-        int fd = open(mfd.path.c_str(), O_RDONLY);
-        if (fd < 0)
-            return MODULE_NOT_FOUND;
+        size_t off = 0;
+        while (off < modinfo.size()) {
+            size_t end = off;
+            while (end < modinfo.size() && modinfo[end] != '\0') ++end;
 
-        int ret = MODULE_ACTION_SUCCESS;
+            std::string entry(&modinfo[off], end - off);
+            off = end + 1;
+            auto eq = entry.find('=');
+            if (eq == std::string::npos)
+                continue;
 
-        if (mfd.forceLoad) {
-            std::cerr << "[STUB] module force load not implemented" << std::endl;
-            return MODULE_INSERTION_DISCOURAGED;
-        }
+            std::string key = entry.substr(0, eq);
+            std::string val = entry.substr(eq + 1);
 
-        std::string str;
-        const char* params;
-        {
-            std::stringstream sParams;
-            for (size_t i = 0; i < mfd.params.size(); i++) {
-                sParams << mfd.params[i];
+            if (key == "name") fd.mod.name = val;
+            else if (key == "description") fd.mod.description = val;
+            else if (key == "author") fd.mod.author = val;
+            else if (key == "license") fd.mod.license = val;
+            else if (key == "srcversion") fd.mod.srcVersion = val;
+            else if (key == "vermagic") fd.mod.vermagic = val;
+            else if (key == "depends") {
+                std::stringstream deps(val);
+                std::string dep;
 
-                if (i != mfd.params.size() - 1)
-                    sParams << " ";
-            }
-
-            str = sParams.str();
-            params = str.c_str();
-        }
-
-        long sysret = syscall(SYS_finit_module, fd, params, flags);
-        if (sysret != 0) {
-            switch (errno) {
-                case 0:
-                    ret = MODULE_ACTION_SUCCESS;
-                    break;
-                case EPERM:
-                case EACCES:
-                case ENOEXEC:
-                    ret = MODULE_PERMISSION_DENIED;
-                    break;
-                case EINVAL:
-                case EFAULT:
-                    ret = MODULE_INVALID_FORMAT;
-                    break;
-                case ENOKEY:
-                case EBUSY:
-                    ret = MODULE_INSERTION_DISCOURAGED;
-                    break;
-                case EEXIST:
-                    ret = MODULE_ALREADY_LOADED;
-                    break;
-                case ENOSYS:
-                case ENOSPC:
-                case ENOMEM:
-                    ret = MODULE_SYSTEM_FAILURE;
-                    break;
-                default:
-                    ret = MODULE_UNDEFINED_ERROR;
-                    break;
+                while (std::getline(deps, dep, ','))
+                    fd.mod.depends.push_back(TrimString(dep));
             }
         }
-
-        close(fd);
-
-        return ret;
     }
 
-    int UnloadModule(const std::string& name) {
-        std::vector<Module> mods = ListModules();
-        bool found = false;
-        for (const auto& mod : mods) {
-            if (mod.name == name) {
-                found = true;
+    file.close();
+
+    return fd;
+}
+
+int LoadModule(const ModuleFD &mfd) {
+    return LoadModule(mfd, 0);
+}
+
+int LoadModule(const ModuleFD &mfd, int flags) {
+    if (!std::filesystem::exists(mfd.path))
+        return MODULE_NOT_FOUND;
+
+    int fd = open(mfd.path.c_str(), O_RDONLY);
+    if (fd < 0)
+        return MODULE_NOT_FOUND;
+
+    int ret = MODULE_ACTION_SUCCESS;
+
+    if (mfd.forceLoad) {
+        std::cerr << "[STUB] module force load not implemented" << std::endl;
+        return MODULE_INSERTION_DISCOURAGED;
+    }
+
+    std::string str;
+    const char *params;
+    {
+        std::stringstream sParams;
+        for (size_t i = 0; i < mfd.params.size(); i++) {
+            sParams << mfd.params[i];
+
+            if (i != mfd.params.size() - 1)
+                sParams << " ";
+        }
+
+        str = sParams.str();
+        params = str.c_str();
+    }
+
+    long sysret = syscall(SYS_finit_module, fd, params, flags);
+    if (sysret != 0) {
+        switch (errno) {
+            case 0:
+                ret = MODULE_ACTION_SUCCESS;
                 break;
-            }
+            case EPERM:
+            case EACCES:
+            case ENOEXEC:
+                ret = MODULE_PERMISSION_DENIED;
+                break;
+            case EINVAL:
+            case EFAULT:
+                ret = MODULE_INVALID_FORMAT;
+                break;
+            case ENOKEY:
+            case EBUSY:
+                ret = MODULE_INSERTION_DISCOURAGED;
+                break;
+            case EEXIST:
+                ret = MODULE_ALREADY_LOADED;
+                break;
+            case ENOSYS:
+            case ENOSPC:
+            case ENOMEM:
+                ret = MODULE_SYSTEM_FAILURE;
+                break;
+            default:
+                ret = MODULE_UNDEFINED_ERROR;
+                break;
         }
-
-        if (!found)
-            return MODULE_NOT_LOADED;
-
-        int ret = MODULE_ACTION_SUCCESS;
-        long sysret = syscall(SYS_delete_module, name.c_str(), 0);
-        if (sysret != 0) {
-            switch (errno) {
-                case 0:
-                    ret = MODULE_ACTION_SUCCESS;
-                    break;
-                case EPERM:
-                case EACCES:
-                case ENOEXEC:
-                    ret = MODULE_PERMISSION_DENIED;
-                    break;
-                case EINVAL:
-                case EFAULT:
-                    ret = MODULE_INVALID_FORMAT;
-                    break;
-                case ENOKEY:
-                case EBUSY:
-                    ret = MODULE_INSERTION_DISCOURAGED;
-                    break;
-                case EEXIST:
-                    ret = MODULE_ALREADY_LOADED;
-                    break;
-                case ENOSYS:
-                case ENOSPC:
-                case ENOMEM:
-                    ret = MODULE_SYSTEM_FAILURE;
-                    break;
-                default:
-                    ret = MODULE_UNDEFINED_ERROR;
-                    break;
-            }
-        }
-
-        return ret;
     }
 
-    std::map<std::string, std::filesystem::path> ListAvailableModules() {
-        std::map<std::string, std::filesystem::path> modsAvail;
+    close(fd);
 
-        struct utsname uts{};
-        if (uname(&uts) != 0) {
-            std::cerr << "[KERNEL] uname error, " << errno << std::endl;
-            return modsAvail;
+    return ret;
+}
+
+int UnloadModule(const std::string &name) {
+    std::vector<Module> mods = ListModules();
+    bool found = false;
+    for (const auto &mod: mods) {
+        if (mod.name == name) {
+            found = true;
+            break;
         }
+    }
 
-        std::vector<std::string> dirs = {
-                "/lib/module/" + std::string(uts.release) + "/kernel",
-                "/System/base/lib/modules/" + std::string(uts.release) + "/kernel"
-        };
+    if (!found)
+        return MODULE_NOT_LOADED;
 
-        for (const auto& dir : dirs) {
-            for (const auto& entry : std::filesystem::recursive_directory_iterator(dir)) {
-                if (!entry.is_regular_file() || entry.path().extension() != ".ko")
-                    continue;
-
-                try {
-                    ModuleFD fd = GetModuleData(entry.path());
-                    modsAvail[fd.mod.name] = entry.path();
-                } catch (const std::exception& e) {
-                    std::cerr << "[KERNEL] scanning modules for entry " << entry.path().string() << " failed" << std::endl;
-                }
-            }
+    int ret = MODULE_ACTION_SUCCESS;
+    long sysret = syscall(SYS_delete_module, name.c_str(), 0);
+    if (sysret != 0) {
+        switch (errno) {
+            case 0:
+                ret = MODULE_ACTION_SUCCESS;
+                break;
+            case EPERM:
+            case EACCES:
+            case ENOEXEC:
+                ret = MODULE_PERMISSION_DENIED;
+                break;
+            case EINVAL:
+            case EFAULT:
+                ret = MODULE_INVALID_FORMAT;
+                break;
+            case ENOKEY:
+            case EBUSY:
+                ret = MODULE_INSERTION_DISCOURAGED;
+                break;
+            case EEXIST:
+                ret = MODULE_ALREADY_LOADED;
+                break;
+            case ENOSYS:
+            case ENOSPC:
+            case ENOMEM:
+                ret = MODULE_SYSTEM_FAILURE;
+                break;
+            default:
+                ret = MODULE_UNDEFINED_ERROR;
+                break;
         }
+    }
 
+    return ret;
+}
+
+std::map<std::string, std::filesystem::path> ListAvailableModules() {
+    std::map<std::string, std::filesystem::path> modsAvail;
+
+    struct utsname uts{};
+    if (uname(&uts) != 0) {
+        std::cerr << "[KERNEL] uname error, " << errno << std::endl;
         return modsAvail;
     }
 
+    std::vector<std::string> dirs = {
+            "/lib/module/" + std::string(uts.release) + "/kernel",
+            "/System/base/lib/modules/" + std::string(uts.release) + "/kernel"
+    };
+
+    for (const auto &dir: dirs) {
+        for (const auto &entry: std::filesystem::recursive_directory_iterator(dir)) {
+            if (!entry.is_regular_file() || entry.path().extension() != ".ko")
+                continue;
+
+            try {
+                ModuleFD fd = GetModuleData(entry.path());
+                modsAvail[fd.mod.name] = entry.path();
+            } catch (const std::exception &e) {
+                std::cerr << "[KERNEL] scanning modules for entry " << entry.path().string() << " failed" << std::endl;
+            }
+        }
+    }
+
+    return modsAvail;
 }

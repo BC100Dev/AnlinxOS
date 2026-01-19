@@ -2,8 +2,6 @@
 
 #include <iostream>
 
-using namespace ALX64::Linux;
-
 int main(int argc, char** argv) {
     if (argc == 1) {
         std::cerr << "Usage: " << argv[0] << " <kernel-module-file>" << std::endl;

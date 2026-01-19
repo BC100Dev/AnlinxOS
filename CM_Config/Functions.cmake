@@ -80,3 +80,22 @@ function(CopyTarget TARGET COPY_NAME COPY_DIR)
             COMMAND ${CMAKE_COMMAND} -E copy ${COPYING_TARGET_SRC} "${COPY_DIR}/${COPY_NAME}"
             COMMENT "Copying ${COPYING_TARGET_SRC} -> ${COPY_DIR}/${COPY_NAME}")
 endfunction()
+
+function(CopyExternalTarget TARGET COPY_NAME COPY_DIR)
+    file(MAKE_DIRECTORY "${COPY_DIR}")
+
+    # Create a reproducible, short hash based on the copy directory
+    string(SHA1 HASH "${COPY_DIR}")
+    string(SUBSTRING "${HASH}" 0 8 HASH8)
+
+    set(UNIQUE_NAME copy_external_${TARGET}_${COPY_NAME}_${HASH8})
+
+    add_custom_target(
+            ${UNIQUE_NAME} ALL
+            COMMAND ${CMAKE_COMMAND} -E copy
+            $<TARGET_FILE:${TARGET}>
+            "${COPY_DIR}/${COPY_NAME}"
+            DEPENDS ${TARGET}
+            VERBATIM
+    )
+endfunction()

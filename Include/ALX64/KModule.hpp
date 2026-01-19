@@ -19,48 +19,44 @@
 #include <filesystem>
 #include <map>
 
-namespace ALX64::Linux {
+enum SyscallInsertion {
+    FINIT_MODULE = 0,
+    INIT_MODULE = 1
+};
 
-    enum SyscallInsertion {
-        FINIT_MODULE = 0,
-        INIT_MODULE = 1
-    };
+struct Module {
+    std::string name;
+    std::string description;
+    std::string author;
+    std::string license;
+    std::string srcVersion;
+    std::vector<std::string> depends;
+    std::string vermagic;
+};
 
-    struct Module {
-        std::string name;
-        std::string description;
-        std::string author;
-        std::string license;
-        std::string srcVersion;
-        std::vector<std::string> depends;
-        std::string vermagic;
-    };
+struct ModuleFD {
+    Module mod;
+    std::filesystem::path path;
+    std::vector<std::string> params;
 
-    struct ModuleFD {
-        Module mod;
-        std::filesystem::path path;
-        std::vector<std::string> params;
+    /**
+     * UNSAFE!!! This will patch out the vermagic temporarily due to the kernel expecting the EXACT kernel version.
+     * This has unintended side effects, if set to true. One side effect comes immediately, being kernel tainting.
+     * See other possible effects: <a href="https://ccrma.stanford.edu/planetccrma/man/man8/insmod.8.html">insmod.8</a>
+     */
+    bool forceLoad = false;
+};
 
-        /**
-         * UNSAFE!!! This will patch out the vermagic temporarily due to the kernel expecting the EXACT kernel version.
-         * This has unintended side effects, if set to true. One side effect comes immediately, being kernel tainting.
-         * See other possible effects: <a href="https://ccrma.stanford.edu/planetccrma/man/man8/insmod.8.html">insmod.8</a>
-         */
-        bool forceLoad = false;
-    };
+ModuleFD GetModuleData(const std::filesystem::path &path);
 
-    ModuleFD GetModuleData(const std::filesystem::path &path);
+int LoadModule(const ModuleFD &fd);
 
-    int LoadModule(const ModuleFD &fd);
+int LoadModule(const ModuleFD &fd, int flags);
 
-    int LoadModule(const ModuleFD &fd, int flags);
+int UnloadModule(const std::string &name);
 
-    int UnloadModule(const std::string &name);
+std::vector<Module> ListModules();
 
-    std::vector<Module> ListModules();
-
-    std::map<std::string, std::filesystem::path> ListAvailableModules();
-
-}
+std::map<std::string, std::filesystem::path> ListAvailableModules();
 
 #endif //ALX64_KMODULE_HPP

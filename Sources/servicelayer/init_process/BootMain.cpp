@@ -10,6 +10,7 @@
 #include <linux/reboot.h>
 
 #include "BootProcedure.hpp"
+#include "BootProcess.hpp"
 
 #include <ALX64/Utilities.hpp>
 
@@ -54,7 +55,7 @@ void print_args(const std::vector<std::string> &args) {
 }
 
 int openShell(const std::vector<std::string> &args) {
-    std::cout << "*** ANLIN OS Init Shell ***" << std::endl;
+    std::cout << "*** AnlinxOS Init Shell ***" << std::endl;
     int rc = 0;
 
     while (true) {
@@ -76,7 +77,7 @@ int openShell(const std::vector<std::string> &args) {
         if (cmdline.empty())
             continue;
 
-        std::vector<std::string> tokens = ALX64::Utils::TranslateStringToCommandline(cmdline);
+        std::vector<std::string> tokens = TranslateStringToCommandline(cmdline);
         if (tokens.empty())
             continue;
 
@@ -165,9 +166,17 @@ int mount_special(const std::string& src, const std::string& dist, const std::st
     return mount(src.c_str(), dist.c_str(), fs.c_str(), 0, nullptr);
 }
 
+void process_args(const std::vector<std::string>& args) {
+    for (const std::string& arg : args) {
+        if (arg == "system") {
+            BProc::currentInitProcess = BProc::InitProcess::INIT_SYSTEM;
+        }
+    }
+}
+
 int main(int argc, char **argv) {
     // order of the PATH var:
-    // 1. point to the /System/bin directory (effectively gets symlinked to /System/x64 or /System/arm64, depending on the architecture)
+    // 1. point to the /System/bin directory (effectively gets symlinked to /System/x64 or /System/arm64, depending on the build architecture)
     // 2. default path of /System/x64
     // 3. standard old-ass paths
     setenv("PATH", "/System/bin:/System/x64:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin", 1);
