@@ -26,6 +26,8 @@ Legend:
 [ ] Get the Boot Animation playing as part of a MP4 file, allowing frames and audio to be decoded in real time
 [ ] Get the OEM logo to show up during the init stages before handing over to boot animation
   > ChatGPT revealed that the OEM logo is exposed via "/sys/firmware/acpi/bgrt/image"
+[ ] Include the ability to switch audio channels for each audio stack device (alarms, music, sounds, notifications etc.)
+  > I'm not getting embarrassed on a train again 😭😭😭😭😭😭😭😭
 
 ##### PERMISSIONS NEEDED TO INCLUDE #####
 [ ] Require apps to always prompt the user into installing applications, both Android and native
