@@ -1,0 +1,36 @@
+@loadable_config
+
+find_partition __PRIMARY_STORAGE odm | error "odm partition not found"
+find_partition __PRIMARY_STORAGE odm_dlkm | error "odm_dlkm partition not found"
+find_partition __PRIMARY_STORAGE system_ext | error "system_ext partition not found"
+find_partition __PRIMARY_STORAGE system_dlkm | error "system_dlkm partition not found"
+find_partition __PRIMARY_STORAGE vendor | error "vendor partition not found"
+find_partition __PRIMARY_STORAGE vendor_dlkm | error "vendor_dlkm partition not found"
+find_partition __PRIMARY_STORAGE product | error "product partition not found"
+
+mount __PRIMARY_STORAGE vendor /vendor
+mount __PRIMARY_STORAGE vendor_dlkm /vendor_dlkm
+mount __PRIMARY_STORAGE system_ext /system_ext
+mount __PRIMARY_STORAGE system_dlkm /system_dlkm
+mount __PRIMARY_STORAGE product /product
+
+if find_partition __PRIMARY_STORAGE recovery {
+    mount __PRIMARY_STORAGE recovery /recovery
+}
+
+if find_partition __PRIMARY_STORAGE dtbo {
+    include dtbo_func
+    mount __PRIMARY_STORAGE dtbo /dtbo
+
+    DTBO_LoadDir /dtbo
+}
+
+if __COMMAND_LINE == "boot-recovery" {
+    if find_file /recovery/init {
+        set init /recovery/init
+    }
+}
+
+set init /system/bin/init
+
+start

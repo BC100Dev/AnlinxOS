@@ -8,6 +8,8 @@ elseif (NOT PROJECT_NAME)
     project(${CM_PROJECT_NAME})
 endif ()
 
+set(CMAKE_CXX_STANDARD 23)
+
 file(GLOB CM_CONFIG_FILES "${CMAKE_CURRENT_SOURCE_DIR}/CM_Config/*.cmake")
 foreach (CM_CONFIG_FILE ${CM_CONFIG_FILES})
     include("${CM_CONFIG_FILE}")

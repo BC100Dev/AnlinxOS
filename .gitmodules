@@ -1,6 +1,0 @@
-[submodule "External/linux-kernel"]
-	path = External/linux-kernel
-	url = https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
-[submodule "External/zlib"]
-	path = External/zlib
-	url = https://github.com/madler/zlib

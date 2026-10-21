@@ -83,6 +83,12 @@ on where the planning is going, this is ending up to be a necessity to be dealt 
 there are configuration files that I am not aware, but then, again, `/usr` and `/etc` won't
 exist.
 
+As of now, AnlinxOS is currently in the planning stages and a semi-active development. Most
+components, which include Wayland and a few extra things will remain, but other components,
+such as the C library will be needed to be rewritten due to the heavy changes in the
+distribution pipeline. The C library will consist of both `glibc` and `bionic` themselves,
+effectively naming this new 
+
 Another thing to mention is keeping the status of this entire thing being open source. Now,
 sure, GitHub can help me store the sources for now. However, once I hit the limitations, I would
 have to move the source files over to my own server, bypassing the limitations in the process,

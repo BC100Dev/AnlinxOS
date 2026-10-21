@@ -1,0 +1,25 @@
+@bootconfig
+
+title "AnlinxOS"
+subtitle "A Linux operating system designed for mobile and desktop devices"
+
+load_module ext4
+load_module vfat
+load_module f2fs
+
+if __DEVICE_TYPE == "mobile" {
+    load_config alx-mobile
+    ret
+}
+
+if cmdline(root) {
+    find_device cmdline(root)
+}
+
+foreach i (zfs btrfs) {
+    if has_module $i {
+        load_module $i
+    }
+}
+
+start
