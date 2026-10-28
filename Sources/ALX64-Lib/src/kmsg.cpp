@@ -85,9 +85,14 @@ char* kmsg_read(kmsg_t* ctx, int startOffset, int size) {
     if (startOffset != -1)
         lseek(ctx->stream_fd, startOffset, SEEK_SET);
 
-    char buf[size];
-    if (ssize_t ret = read(ctx->stream_fd, buf, size); ret < 0)
+    auto buf = static_cast<char*>(malloc(size));
+    if (!buf)
         return nullptr;
+
+    if (ssize_t ret = read(ctx->stream_fd, buf, size); ret < 0) {
+        free(buf);
+        return nullptr;
+    }
 
     return buf;
 }

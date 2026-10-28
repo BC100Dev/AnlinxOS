@@ -10,7 +10,7 @@
 
 static kmsg_t* kmsg = nullptr;
 
-static void sigsegv_handler_impl(siginfo_t* info) {
+extern "C" void sigsegv_handler_impl(siginfo_t* info) {
     if (info->si_code > 0) {
         if (getpid() == 1) {
             kmsg_write(kmsg, LOGLEVEL_EMERG, "init: fault captured - forcing reboot");

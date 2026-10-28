@@ -10,7 +10,8 @@ Legend:
 ##### Current Ideas (Desktop Core, v1) #####
 [H] Get initramfs working.
   > Halted for the C++ Extended Library due to reason of getting Kernel module loading working
-[-] Get the C++ Extended Library (ALX) working
+[-] Get the C/C++ Extended Library (ALX) working
+[-] Write the C library that also has Glibc and Bionic compatibility
 [-] Have initramfs pass the execution onto the disk.
 [ ] Rewrite the libc, merging glibc and bionic into one thing.
 [-] Get core components working (rewrite BusyBox).
@@ -33,7 +34,6 @@ Legend:
 [ ] Require apps to always prompt the user into installing applications, both Android and native
 [ ] Runtime permission system that is similar to Android
 [ ] Require all binaries to have ".prmseq" ELF header
-[ ] Provide "clang" and "clang++" compilers for AnlinxOS that require the use of ".prmseq" ELF headers to explicitly require permissions
 
 ##### Current Ideas (Mobile Core, stabilized in v5, probably) #####
 [ ] Port over the Desktop things to Mobile, effectively taking 6 months or probably more to port... ohgodpleasehelpme-

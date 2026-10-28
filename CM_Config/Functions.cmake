@@ -36,7 +36,7 @@ function(SetTargetFilename TARGET NAME)
     )
 endfunction()
 
-function(Symlink TARGET_NAME SOURCE_FILE SYMLINK_NAME SYMLINK_DIR)
+function(SymlinkTarget TARGET_NAME SOURCE_FILE SYMLINK_NAME SYMLINK_DIR)
     if (NOT EXISTS "${SYMLINK_DIR}")
         file(MAKE_DIRECTORY "${SYMLINK_DIR}")
     endif ()
@@ -79,6 +79,24 @@ function(CopyTarget TARGET COPY_NAME COPY_DIR)
             POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy ${COPYING_TARGET_SRC} "${COPY_DIR}/${COPY_NAME}"
             COMMENT "Copying ${COPYING_TARGET_SRC} -> ${COPY_DIR}/${COPY_NAME}")
+endfunction()
+
+function(CopyFile FILE_PATH COPY_NAME COPY_DIR DEPENDS_ON)
+    file(MAKE_DIRECTORY "${COPY_DIR}")
+    add_custom_command(OUTPUT "${COPY_DIR}/${COPY_NAME}"
+            COMMAND ${CMAKE_COMMAND} -E copy "${FILE_PATH}" "${COPY_DIR}/${COPY_NAME}"
+            DEPENDS "${FILE_PATH}"
+            COMMENT "Copying ${FILE_PATH} -> ${COPY_DIR}/${COPY_NAME}"
+    )
+
+    string(MD5 _hash "${COPY_DIR}/${COPY_NAME}")
+    string(MAKE_C_IDENTIFIER "${COPY_NAME}" _name)
+    add_custom_target(copy_${_name}_${_hash} ALL
+            DEPENDS "${COPY_DIR}/${COPY_NAME}")
+
+    if(DEPENDS_ON)
+        add_dependencies(copy_${_name}_${_hash} ${DEPENDS_ON})
+    endif()
 endfunction()
 
 function(CopyExternalTarget TARGET COPY_NAME COPY_DIR)

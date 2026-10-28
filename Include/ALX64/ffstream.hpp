@@ -1,6 +1,10 @@
 #ifndef std_ffstream
 #define std_ffstream
 
+#ifndef __cplusplus
+#error "This header is C++ only."
+#endif
+
 #include <istream>
 #include <ostream>
 #include <memory>

@@ -9,8 +9,6 @@ namespace fs = std::filesystem;
 class StorageAccessError : public std::runtime_error {
 public:
     explicit StorageAccessError(const std::string& what) : std::runtime_error(what) {}
-
-    explicit StorageAccessError(const char* what) : std::runtime_error(what) {}
 };
 
 class StorageAccess {
@@ -48,7 +46,7 @@ public:
 
     fs::path getUserSharedDirectory();
 
-    fs::path getCacheDirectory(bool inHome);
+    fs::path getCacheDirectory(bool global);
 
     fs::path getPublicDirectory(const PublicDirectory& pd);
 };

@@ -4,6 +4,8 @@
 #include <map>
 #include <string>
 
+#include <unistd.h>
+
 static std::map<int, std::string> err_map = {
     {ERR_PERMISSION_DENIED, "Permission for given process denied"},
     {ERR_VALUE_NOT_SUPPORTED, "Value has not been set"},
