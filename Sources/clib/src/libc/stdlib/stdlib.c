@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "ctype.h"
+
 #define ATEXIT_MAX 32
 
 static void (*atexit_funcs[ATEXIT_MAX])(void);
@@ -127,22 +129,9 @@ long long atoll(const char* s) {
     return strtoll(s, NULL, 10);
 }
 
-static int is_space(char c) {
-    return c == ' ' || c == '\t' || c == '\n' ||
-        c == '\r' || c == '\f' || c == '\v';
-}
-
-static int is_digit(char c) {
-    return c >= '0' && c <= '9';
-}
-
-static int is_alpha(char c) {
-    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
-}
-
 static int digitval(char c, int base) {
     int v;
-    if (is_digit(c))
+    if (isdigit(c))
         v = c - '0';
     else if (c >= 'a' && c <= 'z')
         v = c - 'a' + 10;
@@ -155,7 +144,7 @@ static int digitval(char c, int base) {
 }
 
 long strtol(const char* s, char** endptr, int base) {
-    while (is_space(*s))
+    while (isspace(*s))
         s++;
 
     int neg = 0;
@@ -188,7 +177,9 @@ long strtol(const char* s, char** endptr, int base) {
 }
 
 long long strtoll(const char* s, char** endptr, int base) {
-    while (is_space(*s)) s++;
+    while (isspace(*s))
+        s++;
+
     int neg = 0;
     if (*s == '-') {
         neg = 1;
@@ -219,8 +210,12 @@ long long strtoll(const char* s, char** endptr, int base) {
 }
 
 unsigned long strtoul(const char* s, char** endptr, int base) {
-    while (is_space(*s)) s++;
-    if (*s == '+') s++;
+    while (isspace(*s))
+        s++;
+
+    if (*s == '+')
+        s++;
+
     if ((base == 0 || base == 16) && s[0] == '0' &&
         (s[1] == 'x' || s[1] == 'X')) {
         s += 2;
@@ -242,8 +237,12 @@ unsigned long strtoul(const char* s, char** endptr, int base) {
 }
 
 unsigned long long strtoull(const char* s, char** endptr, int base) {
-    while (is_space(*s)) s++;
-    if (*s == '+') s++;
+    while (isspace(*s))
+        s++;
+
+    if (*s == '+')
+        s++;
+
     if ((base == 0 || base == 16) && s[0] == '0' &&
         (s[1] == 'x' || s[1] == 'X')) {
         s += 2;
@@ -265,7 +264,9 @@ unsigned long long strtoull(const char* s, char** endptr, int base) {
 }
 
 double strtod(const char* s, char** endptr) {
-    while (is_space(*s)) s++;
+    while (isspace(*s))
+        s++;
+
     int neg = 0;
     if (*s == '-') {
         neg = 1;
@@ -274,12 +275,12 @@ double strtod(const char* s, char** endptr) {
         s++;
 
     double result = 0.0;
-    while (is_digit(*s))
+    while (isdigit(*s))
         result = result * 10.0 + (*s++ - '0');
     if (*s == '.') {
         s++;
         double frac = 0.1;
-        while (is_digit(*s)) {
+        while (isdigit(*s)) {
             result += (*s++ - '0') * frac;
             frac *= 0.1;
         }
@@ -294,7 +295,7 @@ double strtod(const char* s, char** endptr) {
             s++;
 
         int exp = 0;
-        while (is_digit(*s))
+        while (isdigit(*s))
             exp = exp * 10 + (*s++ - '0');
 
         double base = 10.0;

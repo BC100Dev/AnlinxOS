@@ -62,6 +62,22 @@ CopyFile("${OUTPUT_DIRECTORY_SYSTEM}/${BINARY_PREFIX}/libc.so"
         libc)
 
 # perform symlinks for libdl compatibility
+SymlinkTarget(libc "libc.so" "libc.so.6" "${OUTPUT_DIRECTORY_SYSTEM}/${BINARY_PREFIX}")
+SymlinkTarget(libc "libc.so" "libc.so.6" "${OUTPUT_DIRECTORY_RECVRY}/${BINARY_PREFIX}")
+SymlinkTarget(libc "libc.so" "libc.so.6" "${OUTPUT_DIRECTORY_INITBL}/${BINARY_PREFIX}")
+
 SymlinkTarget(libc "libc.so" "libdl.so" "${OUTPUT_DIRECTORY_SYSTEM}/${BINARY_PREFIX}")
 SymlinkTarget(libc "libc.so" "libdl.so" "${OUTPUT_DIRECTORY_RECVRY}/${BINARY_PREFIX}")
 SymlinkTarget(libc "libc.so" "libdl.so" "${OUTPUT_DIRECTORY_INITBL}/${BINARY_PREFIX}")
+
+SymlinkTarget(libc "libc.so" "libdl.so.2" "${OUTPUT_DIRECTORY_SYSTEM}/${BINARY_PREFIX}")
+SymlinkTarget(libc "libc.so" "libdl.so.2" "${OUTPUT_DIRECTORY_RECVRY}/${BINARY_PREFIX}")
+SymlinkTarget(libc "libc.so" "libdl.so.2" "${OUTPUT_DIRECTORY_INITBL}/${BINARY_PREFIX}")
+
+SymlinkTarget(libc "libc.so" "libpthread.so" "${OUTPUT_DIRECTORY_SYSTEM}/${BINARY_PREFIX}")
+SymlinkTarget(libc "libc.so" "libpthread.so" "${OUTPUT_DIRECTORY_RECVRY}/${BINARY_PREFIX}")
+SymlinkTarget(libc "libc.so" "libpthread.so" "${OUTPUT_DIRECTORY_INITBL}/${BINARY_PREFIX}")
+
+SymlinkTarget(libc "libc.so" "libpthread.so.0" "${OUTPUT_DIRECTORY_SYSTEM}/${BINARY_PREFIX}")
+SymlinkTarget(libc "libc.so" "libpthread.so.0" "${OUTPUT_DIRECTORY_RECVRY}/${BINARY_PREFIX}")
+SymlinkTarget(libc "libc.so" "libpthread.so.0" "${OUTPUT_DIRECTORY_INITBL}/${BINARY_PREFIX}")

@@ -1,0 +1,43 @@
+#ifndef LIMITS_H
+#define LIMITS_H
+
+#define CHAR_BIT    8
+#define SCHAR_MIN   (-128)
+#define SCHAR_MAX   127
+#define UCHAR_MAX   255
+#define CHAR_MIN    SCHAR_MIN
+#define CHAR_MAX    SCHAR_MAX
+#define SHRT_MIN    (-32768)
+#define SHRT_MAX    32767
+#define USHRT_MAX   65535
+#define INT_MIN     (-2147483648)
+#define INT_MAX     2147483647
+#define UINT_MAX    4294967295U
+#define LONG_MIN    (-9223372036854775808L)
+#define LONG_MAX    9223372036854775807L
+#define ULONG_MAX   18446744073709551615UL
+#define LLONG_MIN   (-9223372036854775808LL)
+#define LLONG_MAX   9223372036854775807LL
+#define ULLONG_MAX  18446744073709551615ULL
+
+#define MB_LEN_MAX  4
+
+#define PATH_MAX    4096
+#define NAME_MAX    255
+#define PIPE_BUF    4096
+#define IOV_MAX     1024
+#define OPEN_MAX    1024
+#define ARG_MAX     2097152
+#define LINK_MAX    65000
+#define MAX_CANON   255
+#define MAX_INPUT   255
+#define NGROUPS_MAX 65536
+#define HOST_NAME_MAX 64
+#define LOGIN_NAME_MAX 256
+#define TTY_NAME_MAX 32
+#define SYMLINK_MAX 4096
+#define SYMLOOP_MAX 40
+#define CHILD_MAX   32768
+#define LINE_MAX    2048
+
+#endif

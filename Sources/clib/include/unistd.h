@@ -2,16 +2,23 @@
 #define _UNISTD_H
 
 #include <sys/types.h>
-#include <bits/confname.h>
 
 #define _POSIX_VERSION  200809L
 #define _POSIX2_VERSION 200809L
 #define _XOPEN_VERSION  700
 #define _POSIX_VDISABLE '\0'
 
-#define STDIN_FILENO 0
+#ifndef STDIN_FILENO
+#define STDIN_FILENO  0
+#endif
+
+#ifndef STDOUT_FILENO
 #define STDOUT_FILENO 1
+#endif
+
+#ifndef STDERR_FILENO
 #define STDERR_FILENO 2
+#endif
 
 #define SEEK_SET 0
 #define SEEK_CUR 1

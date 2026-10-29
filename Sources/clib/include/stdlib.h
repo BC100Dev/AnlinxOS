@@ -5,6 +5,7 @@
 
 #ifdef __cplusplus
 extern "C" {
+
 #endif
 
 void* malloc(size_t size);
@@ -23,6 +24,9 @@ int at_quick_exit(void (*func)(void));
 void quick_exit(int status);
 
 char* getenv(const char* name);
+int setenv(const char* name, const char* value, int overwrite);
+int unsetenv(const char* name);
+int putenv(char* string);
 
 int abs(int n);
 long labs(long n);
@@ -74,6 +78,8 @@ int system(const char* command);
 char* mktemp(char* tmpl);
 int mkstemp(char* tmpl);
 
+char* realpath(const char* path, char* resolved);
+
 #define EXIT_SUCCESS 0
 #define EXIT_FAILURE 1
 #define RAND_MAX 0x7fffffff
@@ -86,4 +92,4 @@ void srand(unsigned int seed);
 }
 #endif
 
-#endif //STDLIB_H
+#endif

@@ -10,6 +10,8 @@
 #include <sys/utsname.h>
 #include <zlib.h>
 
+#include <fcntl.h>
+
 namespace fs = std::filesystem;
 
 #define CONFIG_FILE_PROC "/proc/config.gz"

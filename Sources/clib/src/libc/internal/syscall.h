@@ -7,6 +7,8 @@ typedef long sysret_t;
 extern "C" {
 #endif
 
+#define SET_ERRNO(r) ({ long _r = (r); if (_r < 0) { errno = (int)-_r; _r = -1; } _r; })
+
 sysret_t syscall0(long n);
 sysret_t syscall1(long n, long a1);
 sysret_t syscall2(long n, long a1, long a2);

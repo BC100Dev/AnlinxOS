@@ -71,14 +71,19 @@ int main(int argc, char **argv, char **env) {
         return 0;
     }
 
-    fnd = funcMap.find(execName);
-    if (fnd != funcMap.end()) {
-        Executor exec = makeExecutor(argc - 1, argv + 1, env);
-        int ret = fnd->second(exec.argc, exec.argv, exec.env);
-        freeExec(exec);
-        return ret;
+    if (argc >= 2) {
+        fnd = funcMap.find(argv[1]);
+        if (fnd != funcMap.end()) {
+            Executor exec = makeExecutor(argc - 1, argv + 1, env);
+            int ret = fnd->second(exec.argc, exec.argv, exec.env);
+            freeExec(exec);
+            return ret;
+        }
+
+        std::cerr << "Unknown command: " << argv[1] << std::endl;
+        return 1;
     }
 
-    std::cerr << "Unknown command: " << argv[1] << std::endl;
+    std::cerr << "No command given." << std::endl;
     return 1;
 }
